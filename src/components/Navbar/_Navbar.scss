@@ -10,7 +10,6 @@ nav {
     background: colors.$black;
     // Allow double-click on the navbar for maximize
     -webkit-app-region: drag;
-    border-bottom: 1px solid color.adjust(colors.$bg, $lightness: 10%);
     
     // Make logo and search area draggable
     .navbar_logo, .navbar_search {
@@ -23,10 +22,14 @@ nav {
     }
 
     .navbar_logo {
-        margin-left: 4px;
+        margin-left: 16px;
         height: 32px;
-        width: 32px;
+        width: 126px;
         display: flex;
+        img {
+            width: 32px;
+            height: 32px;
+        }
     }
     .navbar_search {
         display: flex;
@@ -61,6 +64,7 @@ nav {
         align-items: center;
         justify-content: center;
         -webkit-app-region: no-drag;
+        width: 126px;
         .navbar_option {
             height: 42px;
             width: 42px;

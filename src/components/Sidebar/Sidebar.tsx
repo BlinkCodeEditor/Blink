@@ -8,12 +8,14 @@ export default function Sidebar() {
   interface SidebarOption {
     label: string
     icon: any
+    active?: boolean
   }
 
   const options: SidebarOption[] = [
     {
       label: 'Explorer (Ctrl + Shift + E)',
-      icon: faFile
+      icon: faFile,
+      active: true
     },
     {
       label: 'Search (Ctrl + Shift + F)',
@@ -36,7 +38,7 @@ export default function Sidebar() {
   return (
     <div className="sidebar">
         {options.map((option, index) => (
-            <SidebarLink key={index} label={option.label} icon={option.icon} />
+            <SidebarLink key={index} label={option.label} icon={option.icon} active={option.active} />
         ))}
     </div>
   )
