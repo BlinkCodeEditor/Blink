@@ -10,6 +10,7 @@ nav {
     background: colors.$black;
     // Allow double-click on the navbar for maximize
     -webkit-app-region: drag;
+    border-bottom: 1px solid color.adjust(colors.$bg, $lightness: 10%);
     
     // Make logo and search area draggable
     .navbar_logo, .navbar_search {
