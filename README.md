@@ -1,30 +1,41 @@
-# React + TypeScript + Vite
+# Blink Code Editor
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+![Blink Code Editor](https://private-user-images.githubusercontent.com/75419729/550216123-e25def45-9476-41e5-b38f-71db43393b3f.png?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NzEyNTk3OTAsIm5iZiI6MTc3MTI1OTQ5MCwicGF0aCI6Ii83NTQxOTcyOS81NTAyMTYxMjMtZTI1ZGVmNDUtOTQ3Ni00MWU1LWIzOGYtNzFkYjQzMzkzYjNmLnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNjAyMTYlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjYwMjE2VDE2MzEzMFomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTI5NmI4Y2Q2NjQ3MjRhYTA0YzcyMTI5Yjg0NzlmOTI1N2JmNDYxZTQ5NzgwMTdjY2EwYTkyYzc2ZTg5YjQ4MDgmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0In0.0oaUphwyjKH4N1MjpfKmqgwBIHN9h2oxBHXWdBPOaHI)
 
-Currently, two official plugins are available:
+## Overview
+Blink Code Editor is a high-performance IDE built from the ground up to ensure every millisecond of latency is eliminated. This project is a standalone development environment, not a VS Code fork, focusing on a lightweight footprint and instantaneous feedback.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Project Status
 
-## Expanding the ESLint configuration
+| Release Channel | Version | Stability | Available | Platforms |
+| :--- | :--- | :--- | :--- | :--- |
+| **Development** | v0.0.0-dev | Low | Yes | Windows |
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+## Development Progress
 
-- Configure the top-level `parserOptions` property like this:
+### Completed Features
+* Draggable and resizable window with basic navbar buttons.
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
-```
+### Work in Progress
+* Core text rendering engine.
+* Native file system explorer.
+* Custom theme engine.
+* Integrated terminal emulator.
+* LSP (Language Server Protocol) integration.
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+### Future Goals
+* Global search and indexing.
+* Multi-cursor support.
+* Plugin API for community extensions.
+* Built-in Git interface.
+* Cloud synchronization for settings.
+
+## Contributing
+We welcome contributions from the community. Since Blink is built from scratch, we are looking for developers interested in performance optimization and core architecture. 
+
+1. Fork the repository.
+2. Create your feature branch.
+3. Submit a Pull Request with a detailed description of changes.
+
+## License
+This project is licensed under the MIT License - see the LICENSE file for details.
