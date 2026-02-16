@@ -1,0 +1,80 @@
+@use '../../assets/styles/colors';
+@use 'sass:color';
+/* @use '../../assets/styles/global'; */
+
+// Breakpoints
+$mobile: 768px;
+$small-mobile: 480px;
+$tablet: 1024px;
+$desktop: 1200px;
+
+// Route Loader Animation
+.route-loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: colors.$black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    animation: routeFadeIn 0.3s ease-in-out;
+
+    .loader-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 24px;
+
+        .loader-spinner {
+            position: relative;
+            width: 60px;
+            height: 60px;
+
+            .spinner-ring {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                border: 3px solid transparent;
+                border-top: 3px solid colors.$primary;
+                border-radius: 50%;
+                animation: spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+
+                &:nth-child(2) {
+                    animation-delay: -0.16s;
+                    border-top-color: color.adjust(colors.$primary, $lightness: 20%);
+                }
+
+                &:nth-child(3) {
+                    animation-delay: -0.32s;
+                    border-top-color: color.adjust(colors.$primary, $lightness: 40%);
+                }
+            }
+        }
+
+        .loader-text {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 16px;
+            font-weight: 500;
+            color: colors.$white;
+
+            .dots {
+                display: flex;
+                gap: 2px;
+
+                .dot {
+                    animation: bounce 1.4s ease-in-out infinite both;
+                    color: colors.$primary;
+
+                    &:nth-child(1) { animation-delay: -0.32s; }
+                    &:nth-child(2) { animation-delay: -0.16s; }
+                    &:nth-child(3) { animation-delay: 0s; }
+                }
+            }
+        }
+    }
+}

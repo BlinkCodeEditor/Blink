@@ -1,0 +1,74 @@
+@use '../../assets/styles/colors.scss';
+@use 'sass:color';
+
+nav {
+    width: 100%;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: colors.$black;
+    // Allow double-click on the navbar for maximize
+    -webkit-app-region: drag;
+    
+    // Make logo and search area draggable
+    .navbar_logo, .navbar_search {
+        -webkit-app-region: drag;
+    }
+    
+    // Make the options area non-draggable for button clicks
+    .navbar_options {
+        -webkit-app-region: no-drag;
+    }
+
+    .navbar_logo {
+        margin-left: 4px;
+        height: 32px;
+        width: 32px;
+        display: flex;
+    }
+    .navbar_search {
+        display: flex;
+        height: 32px;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        background: color.adjust(colors.$bg, $lightness: 5%);
+        border-radius: 99px;
+        border: 1px solid color.adjust(colors.$bg, $lightness: 10%);
+        padding: 4px 16px;
+        gap: 8px;
+        span {
+            font-size: 14px;
+            color: colors.$gray;
+        }
+        input {
+            -webkit-app-region: no-drag;
+            width: 200px;
+            height: 100%;
+            background: transparent;
+            color: colors.$white;
+            font-weight: 400;
+            font-size: 13px;
+            &::placeholder {
+                color: colors.$gray;
+            }
+        }
+    }
+    .navbar_options {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-app-region: no-drag;
+        .navbar_option {
+            height: 42px;
+            width: 42px;
+            background: transparent;
+            color: colors.$white;
+            font-size: 14px;
+            &:hover {
+                background: color.adjust(colors.$bg, $lightness: 5%);
+            }
+        }
+    }
+}
