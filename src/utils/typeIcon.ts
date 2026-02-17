@@ -53,7 +53,7 @@ export type FileType =
 
 // Enhanced structure: icon + color (as Tailwind class, CSS var, or hex)
 export const typeIconMap: Record<FileType, { icon: IconDefinition; color: string }> = {
-  folder: { icon: faFolder, color: "#FFD54F" },          // yellow/orange - classic folder
+  folder: { icon: faFolder, color: "#7c7c7cff" },          // yellow/orange - classic folder
   file:   { icon: faFile,   color: "#90A4AE" },          // grey - generic file
 
   html:   { icon: faHtml5,  color: "#E44D26" },          // HTML orange

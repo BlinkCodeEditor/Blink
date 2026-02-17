@@ -2,16 +2,13 @@
 @use 'sass:color';
 
 .explorer {
-    position: fixed;
-    top: 42px;
-    left: 68px;
+    position: relative;
     height: calc(100% - 42px);
-    width: 250px;
+    min-width: 250px;
     background: color.adjust(colors.$black, $lightness: 5%);
-    border-radius: 32px;
+    border-radius: 16px;
     padding: 16px;
     border: 1px solid color.adjust(colors.$bg, $lightness: 10%);
-    z-index: -1;
     .explorer_header {
         display: flex;
         align-items: center;
@@ -66,17 +63,8 @@
         height: calc(100% - 40px);
         
         /* Scrollbar styles */
-        &::-webkit-scrollbar {
-            width: 4px;
-        }
-        
-        &::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        
         &::-webkit-scrollbar-thumb {
-            background: colors.$gray;
-            border-radius: 4px;
+            background: color.adjust(colors.$bg, $lightness: 15%);
         }
 
         .tree-node {

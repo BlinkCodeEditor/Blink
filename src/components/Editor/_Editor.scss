@@ -1,0 +1,170 @@
+@use '../../assets/styles/colors.scss';
+@use 'sass:color';
+
+.editor {
+    position: relative;
+    flex: 1;
+    height: calc(100% - 42px);
+    background: color.adjust(colors.$black, $lightness: 5%);
+    border-radius: 24px;
+    border: 1px solid color.adjust(colors.$bg, $lightness: 10%);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
+    .editor_tabs {
+        display: flex;
+        align-items: center;
+        padding: 8px 16px;
+        gap: 8px;
+        border-bottom: 1px solid color.adjust(colors.$bg, $lightness: 5%);
+        overflow-x: auto;
+        
+        &::-webkit-scrollbar-thumb {
+            background: color.adjust(colors.$bg, $lightness: 15%);
+        }
+
+        .tab {
+            display: flex;
+            align-items: center;
+            padding: 6px 16px;
+            gap: 8px;
+            background: color.adjust(colors.$bg, $lightness: 5%);
+            border: 1px solid color.adjust(colors.$bg, $lightness: 10%);
+            border-radius: 99px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+
+            &.active {
+                background: color.adjust(colors.$bg, $lightness: 10%);
+                .tab_name {
+                    color: colors.$white;
+                }
+                .tab_close {
+                    color: colors.$white;
+                }
+            }
+
+            &:hover {
+                background: color.adjust(colors.$bg, $lightness: 10%);
+                
+                .tab_close_wrapper {
+                    .tab_dot {
+                        display: none;
+                    }
+                    .tab_close {
+                        display: flex;
+                    }
+                }
+            }
+
+            .tab_type {
+                font-size: 14px;
+                display: flex;
+                align-items: center;
+            }
+
+            .tab_name {
+                font-size: 13px;
+                font-weight: 500;
+                color: colors.$gray;
+            }
+
+            .tab_close_wrapper {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 14px;
+                height: 14px;
+                margin-left: 4px;
+
+                .tab_dot {
+                    width: 6px;
+                    height: 6px;
+                    background: colors.$gray;
+                    border-radius: 50%;
+                    display: none;
+                }
+
+                .tab_close {
+                    display: none;
+                    font-size: 10px;
+                    color: colors.$gray;
+                    padding: 2px;
+                    border-radius: 4px;
+                    &:hover {
+                        background: color.adjust(colors.$bg, $lightness: 20%);
+                    }
+                }
+            }
+
+            &.modified {
+                .tab_dot {
+                    display: block;
+                }
+            }
+        }
+    }
+
+    .editor_main {
+        flex: 1;
+        width: 100%;
+        // overflow: hidden;
+        
+        .monaco-editor {
+            .margin {
+                background-color: transparent !important;
+            }
+            .monaco-editor-background {
+                background-color: transparent !important;
+            }
+        }
+    }
+    .editor_empty {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        gap: 16px;
+        color: color.adjust(colors.$white, $alpha: -0.3);
+        padding: 24px;
+        img {
+            height: 96px;
+            width: 96px;
+        }
+        p {
+            font-size: 18px;
+            color: colors.$white;
+            font-weight: 400;
+            text-align: center;
+        }
+        .shortcuts {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 16px;
+            flex-wrap: wrap;
+            p {
+                font-size: 16px;
+                color: color.adjust(colors.$white, $alpha: -0.3);
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                cursor: pointer;
+                &:hover {
+                    span {
+                        background: color.adjust(colors.$bg, $lightness: 5%);
+                    }
+                }
+                span {
+                    padding: 8px 16px;
+                    background: rgba(colors.$bg, 0.5);
+                    border-radius: 12px;
+                }
+            }
+        }
+    }
+}

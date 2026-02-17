@@ -1,7 +1,7 @@
 {
   "name": "blink",
   "private": true,
-  "version": "0.0.1",
+  "version": "0.0.2",
   "type": "module",
   "description": "Blink Code Editor is a high-performance development environment built for speed and efficiency. Designed for modern workflows, it provides a seamless experience without the bloat of traditional editors.",
   "author": "CodeAdiksuu",
@@ -11,36 +11,19 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
-  "build": {
-    "appId": "com.codeadiksuu.blink",
-    "productName": "Blink",
-    "directories": {
-      "output": "release/${version}"
-    },
-    "win": {
-      "target": "nsis",
-      "icon": "public/logo.ico"
-    },
-    "mac": {
-      "target": "dmg"
-    },
-    "linux": {
-      "target": "AppImage",
-      "icon": "public/logo.png"
-    }
-  },
   "dependencies": {
-    "@fortawesome/fontawesome-svg-core": "^7.2.0",
+    "@fortawesome/fontawesome-svg-core": "^7.2.0"
+  },
+  "devDependencies": {
     "@fortawesome/free-brands-svg-icons": "^7.2.0",
     "@fortawesome/free-regular-svg-icons": "^7.2.0",
     "@fortawesome/free-solid-svg-icons": "^7.2.0",
     "@fortawesome/react-fontawesome": "^3.2.0",
+    "@monaco-editor/react": "^4.7.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^7.13.0",
-    "sass": "^1.97.3"
-  },
-  "devDependencies": {
+    "sass": "^1.97.3",
     "@types/react": "^18.2.64",
     "@types/react-dom": "^18.2.21",
     "@typescript-eslint/eslint-plugin": "^7.1.1",

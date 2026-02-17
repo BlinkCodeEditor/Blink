@@ -15,9 +15,19 @@
     transition: .2s linear;
 }
 
-body, html {
+body, html, #root {
     background: colors.$black;
     color: colors.$white;
+    height: 100%;
+}
+
+main {
+    position: relative;
+    display: flex;
+    width: 100%;
+    height: calc(100% - 42px);
+    gap: 12px;
+    padding: 16px;
 }
 
 ::selection {
