@@ -1,6 +1,6 @@
 # Blink Code Editor
+<img alt="banner-blink" src="https://github.com/user-attachments/assets/4acbb1a2-ec15-4066-aff5-d5a2e59653b6" />
 
-![Blink Code Editor](https://private-user-images.githubusercontent.com/75419729/550216123-e25def45-9476-41e5-b38f-71db43393b3f.png?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NzEzNTU0NzYsIm5iZiI6MTc3MTM1NTE3NiwicGF0aCI6Ii83NTQxOTcyOS81NTAyMTYxMjMtZTI1ZGVmNDUtOTQ3Ni00MWU1LWIzOGYtNzFkYjQzMzkzYjNmLnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNjAyMTclMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjYwMjE3VDE5MDYxNlomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTFjNGRiNmE3Yjk4MzA5MDhmMTFjZmE1ZDk2M2I1YTAxODY2NjZlMGEyZTdjMWM2NzJhNWVhY2E3MGM2YjBhNjQmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0In0.7zgXJaXIFh9Vkoj-PFL2JDBsFVRkl22oI7jQSxitJHk)
 
 ## Overview
 Blink Code Editor is a high-performance IDE built from the ground up to ensure every millisecond of latency is eliminated. This project is a standalone development environment, not a VS Code fork, focusing on a lightweight footprint and instantaneous feedback.
@@ -49,4 +49,5 @@ We welcome contributions from the community. Since Blink is built from scratch, 
 3. Submit a Pull Request with a detailed description of changes.
 
 ## License
+
 This project is licensed under the MIT License - see the LICENSE file for details.
