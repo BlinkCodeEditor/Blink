@@ -19,6 +19,7 @@
         gap: 8px;
         border-bottom: 1px solid color.adjust(colors.$bg, $lightness: 5%);
         overflow-x: auto;
+        min-height: 32px;
         
         &::-webkit-scrollbar-thumb {
             background: color.adjust(colors.$bg, $lightness: 15%);

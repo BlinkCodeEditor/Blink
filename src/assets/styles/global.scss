@@ -12,7 +12,7 @@
     list-style: none;
     text-decoration: none;
     font-family: 'Inter', sans-serif;
-    transition: .2s linear;
+    // transition: .2s linear;
 }
 
 body, html, #root {
@@ -25,9 +25,10 @@ main {
     position: relative;
     display: flex;
     width: 100%;
-    height: calc(100% - 42px);
+    height: calc(100% - 42px - 40px);
     gap: 12px;
     padding: 16px;
+    padding-bottom: 0;
 }
 
 ::selection {

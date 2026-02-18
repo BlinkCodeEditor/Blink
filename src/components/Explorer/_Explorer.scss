@@ -4,11 +4,28 @@
 .explorer {
     position: relative;
     height: calc(100% - 42px);
-    min-width: 250px;
+    min-width: 150px;
     background: color.adjust(colors.$black, $lightness: 5%);
     border-radius: 16px;
     padding: 16px;
     border: 1px solid color.adjust(colors.$bg, $lightness: 10%);
+    transition: width 0.05s linear; // Smooth but responsive
+    overflow: hidden;
+
+    .explorer-resizer {
+        position: absolute;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        width: 4px;
+        cursor: col-resize;
+        z-index: 10;
+        transition: background 0.2s;
+
+        &:hover {
+            background: rgba(colors.$primary, 0.3);
+        }
+    }
     .explorer_header {
         display: flex;
         align-items: center;

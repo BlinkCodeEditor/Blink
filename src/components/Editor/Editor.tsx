@@ -12,9 +12,11 @@ interface EditorProps {
     onCloseTab: (index: number) => void;
     openFolder: () => void;
     onContentChange: (newContent: string) => void;
+    onCursorChange: (pos: { line: number, column: number }) => void;
+    onValidationChange: (markers: any[]) => void;
 }
 
-export default function Editor({ tabs, activeTabIndex, setActiveTabIndex, onCloseTab, openFolder, onContentChange }: EditorProps) {
+export default function Editor({ tabs, activeTabIndex, setActiveTabIndex, onCloseTab, openFolder, onContentChange, onCursorChange, onValidationChange }: EditorProps) {
   const activeFile = tabs[activeTabIndex];
 
   return (
@@ -33,6 +35,25 @@ export default function Editor({ tabs, activeTabIndex, setActiveTabIndex, onClos
                     value={activeFile.content || ''}
                     theme="vs-dark"
                     onChange={(value) => onContentChange(value || '')}
+                    onMount={(editor, monaco) => {
+                        editor.onDidChangeCursorPosition((e) => {
+                            onCursorChange({
+                                line: e.position.lineNumber,
+                                column: e.position.column
+                            });
+                        });
+
+                        monaco.editor.onDidChangeMarkers((resources: any[]) => {
+                            const resource = resources[0];
+                            if (resource && resource.toString() === editor.getModel()?.uri.toString()) {
+                                const markers = monaco.editor.getModelMarkers({ resource });
+                                onValidationChange(markers);
+                            }
+                        });
+                        
+                        // Storage for jump functionality if needed via window/global
+                        (window as any).editorInstance = editor;
+                    }}
                     options={{
                         fontSize: 14,
                         minimap: { enabled: false },

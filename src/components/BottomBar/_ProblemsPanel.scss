@@ -1,0 +1,131 @@
+@use '../../assets/styles/colors.scss';
+@use 'sass:color';
+
+.problems_panel {
+    position: absolute;
+    bottom: 40px;
+    left: 0;
+    width: 100%;
+    background: rgba(colors.$bg, 0.85);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(colors.$gray, 0.2);
+    display: flex;
+    flex-direction: column;
+    z-index: 1000;
+    animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    .resize_handle {
+        position: absolute;
+        top: -3px;
+        left: 0;
+        width: 100%;
+        height: 6px;
+        cursor: ns-resize;
+        z-index: 1001;
+        transition: background 0.2s;
+        &:hover {
+            background: rgba(colors.$white, 0.1);
+        }
+    }
+    
+    .problems_header {
+        padding: 12px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid rgba(colors.$gray, 0.1);
+        .title {
+            color: colors.$gray;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .close_btn {
+            background: transparent;
+            border: none;
+            color: colors.$gray;
+            cursor: pointer;
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.2s;
+            &:hover {
+                color: colors.$white;
+            }
+        }
+    }
+    
+    .problems_list {
+        flex: 1;
+        overflow-y: auto;
+        padding: 8px 0;
+        
+        &::-webkit-scrollbar {
+            width: 6px;
+        }
+        &::-webkit-scrollbar-thumb {
+            background: rgba(colors.$gray, 0.2);
+            border-radius: 3px;
+        }
+
+        .problem_item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 8px 20px;
+            cursor: pointer;
+            transition: background 0.2s;
+            
+            &:hover {
+                background: rgba(colors.$white, 0.05);
+            }
+            
+            .icon {
+                margin-top: 3px;
+                font-size: 14px;
+            }
+            
+            &.error .icon { color: #f44336; }
+            &.warning .icon { color: #ffeb3b; }
+            
+            .problem_details {
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+                .message {
+                    color: colors.$white;
+                    font-size: 13px;
+                    line-height: 1.4;
+                }
+                .location {
+                    color: colors.$gray;
+                    font-size: 11px;
+                    font-weight: 500;
+                }
+            }
+        }
+
+        .no_problems {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: colors.$gray;
+            font-size: 14px;
+            font-style: italic;
+        }
+    }
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}

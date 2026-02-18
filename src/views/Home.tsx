@@ -5,6 +5,8 @@ import Explorer from "../components/Explorer/Explorer";
 import Editor from "../components/Editor/Editor";
 import { FileType } from "../utils/typeIcon";
 import { useKeybinds } from "../utils/keybinds";
+import BottomBar from "../components/BottomBar/BottomBar";
+import ProblemsPanel from "../components/BottomBar/ProblemsPanel";
 
 export interface TabData {
     name: string;
@@ -18,6 +20,9 @@ export default function Home() {
     const [tabs, setTabs] = useState<TabData[]>([]);
     const [activeTabIndex, setActiveTabIndex] = useState(0);
     const [tree, setTree] = useState<any>(null);
+    const [cursorPos, setCursorPos] = useState({ line: 1, column: 1 });
+    const [markers, setMarkers] = useState<any[]>([]);
+    const [showProblems, setShowProblems] = useState(false);
 
     const openFolder = async () => {
         const folderTree = await (window as any).electronAPI.invoke('dialog:openDirectory');
@@ -47,11 +52,15 @@ export default function Home() {
         const existingIndex = tabs.findIndex(tab => tab.path === path);
         if (existingIndex !== -1) {
             setActiveTabIndex(existingIndex);
+            setCursorPos({ line: 1, column: 1 });
+            setMarkers([]);
         } else {
             const content = await (window as any).electronAPI.invoke('file:read', path);
             const newTab: TabData = { name, type, path, content: content || '', isModified: false };
             setTabs([...tabs, newTab]);
             setActiveTabIndex(tabs.length);
+            setCursorPos({ line: 1, column: 1 });
+            setMarkers([]);
         }
     };
 
@@ -61,6 +70,8 @@ export default function Home() {
         if (activeTabIndex >= newTabs.length) {
             setActiveTabIndex(Math.max(0, newTabs.length - 1));
         }
+        setCursorPos({ line: 1, column: 1 });
+        setMarkers([]);
     };
 
     const handleContentChange = (newContent: string) => {
@@ -74,6 +85,15 @@ export default function Home() {
         });
     };
 
+    const handleJumpToProblem = (line: number, column: number) => {
+        const editor = (window as any).editorInstance;
+        if (editor) {
+            editor.setPosition({ lineNumber: line, column: column });
+            editor.revealPositionInCenter({ lineNumber: line, column: column });
+            editor.focus();
+        }
+    };
+
     return (
         <>
             <Navbar />
@@ -83,12 +103,31 @@ export default function Home() {
                 <Editor 
                     tabs={tabs} 
                     activeTabIndex={activeTabIndex} 
-                    setActiveTabIndex={setActiveTabIndex}
+                    setActiveTabIndex={(index) => {
+                        setActiveTabIndex(index);
+                        setCursorPos({ line: 1, column: 1 });
+                    }}
                     onCloseTab={handleCloseTab}
                     openFolder={openFolder}
                     onContentChange={handleContentChange}
+                    onCursorChange={setCursorPos}
+                    onValidationChange={setMarkers}
                 />
             </main>
+            <BottomBar 
+                activeFile={tabs[activeTabIndex]} 
+                cursorPos={cursorPos}
+                errors={markers.filter(m => m.severity === 8).length}
+                warnings={markers.filter(m => m.severity === 4).length}
+                onToggleProblems={() => setShowProblems(!showProblems)}
+            />
+            {showProblems && (
+                <ProblemsPanel 
+                    markers={markers} 
+                    onClose={() => setShowProblems(false)}
+                    onJump={handleJumpToProblem}
+                />
+            )}
         </>
     )
 }
