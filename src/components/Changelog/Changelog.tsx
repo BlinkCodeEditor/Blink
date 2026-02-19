@@ -12,17 +12,18 @@ export default function Changelog({ version, onClose }: ChangelogProps) {
         {
             type: 'New Features',
             items: [
-                'Link clicking (beta)',
-                'Image preview for .png .jpg .jpeg .gif .svg and .ico files'
+                'Creating new files and folders',
+                'New keyboard shortcuts:',
+                '- CTRL + N: Create new file',
+                '- CTRL + SHIFT + N: Create new folder',
+                'Context menu after right click the file/folder with options like copy/paste/cut/rename/remove',
+                'Drag and drop files and folders to move them'
             ]
         },
         {
             type: 'Improvements',
             items: [
-                'Improved application optimizations, files are now loaded faster.',
-                'We fixed an issue where some projects were not loading.',
-                "We've significantly improved support for frontend languages",
-                'Fixed a bug where warnings in the Problems panel were not displayed as an icon with a numeric value (before this, only errors worked)'
+                'Added new shortcuts to home page'
             ]
         }
     ];

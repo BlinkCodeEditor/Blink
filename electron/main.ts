@@ -175,6 +175,59 @@ function createWindow() {
         return tree ? tree.children : [];
     });
 
+    ipcMain.handle('directory:getTree', async (_, dirPath: string) => {
+        return await getFolderTree(dirPath, false);
+    });
+
+    ipcMain.handle('path:dirname', async (_, filePath: string) => {
+        return path.dirname(filePath);
+    });
+
+    ipcMain.handle('path:basename', async (_, filePath: string) => {
+        return path.basename(filePath);
+    });
+
+    ipcMain.handle('path:exists', async (_, filePath: string) => {
+        try {
+            await fs.access(filePath);
+            return true;
+        } catch {
+            return false;
+        }
+    });
+
+    ipcMain.handle('file:delete', async (_, filePath: string) => {
+        try {
+            await fs.rm(filePath, { recursive: true, force: true });
+            return true;
+        } catch (error) {
+            console.error('Failed to delete:', error);
+            return false;
+        }
+    });
+
+    ipcMain.handle('file:rename', async (_, oldPath: string, newPath: string) => {
+        try {
+            await fs.rename(oldPath, newPath);
+            return true;
+        } catch (error) {
+            console.error('Failed to rename:', error);
+            return false;
+        }
+    });
+
+    ipcMain.handle('file:copy', async (_, src: string, dest: string) => {
+        try {
+            // Use fs-extra or just a simple cp if available, but let's stick to Node fs
+            // fs.cp is available in newer Node versions
+            await (fs as any).cp(src, dest, { recursive: true });
+            return true;
+        } catch (error) {
+            console.error('Failed to copy:', error);
+            return false;
+        }
+    });
+
     ipcMain.handle('file:read', async (_, filePath: string) => {
         try {
             return await fs.readFile(filePath, 'utf-8');
@@ -190,6 +243,26 @@ function createWindow() {
             return true;
         } catch (error) {
             console.error('Failed to save file:', error);
+            return false;
+        }
+    });
+
+    ipcMain.handle('file:create', async (_, filePath: string) => {
+        try {
+            await fs.writeFile(filePath, '', 'utf-8');
+            return true;
+        } catch (error) {
+            console.error('Failed to create file:', error);
+            return false;
+        }
+    });
+
+    ipcMain.handle('directory:create', async (_, dirPath: string) => {
+        try {
+            await fs.mkdir(dirPath, { recursive: true });
+            return true;
+        } catch (error) {
+            console.error('Failed to create directory:', error);
             return false;
         }
     });

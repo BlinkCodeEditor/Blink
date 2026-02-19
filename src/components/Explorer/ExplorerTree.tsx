@@ -11,10 +11,19 @@ export interface TreeNode {
     hasChildren?: boolean;
 }
 
-const TreeItem = ({ node, depth, onFileClick }: { node: TreeNode, depth: number, onFileClick: (name: string, type: FileType, path: string) => void }) => {
+const TreeItem = ({ node, depth, onFileClick, selectedPath, onSelect, onExpand, onContextMenu, onMove }: { 
+    node: TreeNode, 
+    depth: number, 
+    onFileClick: (name: string, type: FileType, path: string) => void,
+    selectedPath: string | null,
+    onSelect: (path: string) => void,
+    onExpand: (path: string) => void,
+    onContextMenu: (e: React.MouseEvent, node: TreeNode) => void,
+    onMove: (srcPath: string, targetPath: string) => void
+}) => {
     const [isOpen, setIsOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const [children, setChildren] = useState<TreeNode[]>(node.children || []);
+    const [isDragOver, setIsDragOver] = useState(false);
     
     // Determine icon and color
     let iconData = typeIconMap.file;
@@ -27,20 +36,18 @@ const TreeItem = ({ node, depth, onFileClick }: { node: TreeNode, depth: number,
         }
     }
 
-    const handleClick = async () => {
+    const handleClick = async (e: React.MouseEvent) => {
+        e.stopPropagation();
+        onSelect(node.path);
+        
         if (node.type === 'folder') {
             const nextOpenState = !isOpen;
             setIsOpen(nextOpenState);
             
-            if (nextOpenState && children.length === 0 && node.hasChildren) {
+            if (nextOpenState && (!node.children || node.children.length === 0) && node.hasChildren) {
                 setIsLoading(true);
                 try {
-                    const fetchedChildren = await (window as any).electronAPI.invoke('directory:getChildren', node.path);
-                    if (fetchedChildren) {
-                        setChildren(fetchedChildren);
-                    }
-                } catch (error) {
-                    console.error('Failed to fetch children:', error);
+                    await onExpand(node.path);
                 } finally {
                     setIsLoading(false);
                 }
@@ -51,12 +58,53 @@ const TreeItem = ({ node, depth, onFileClick }: { node: TreeNode, depth: number,
         }
     };
 
+    const handleContextMenu = (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        onContextMenu(e, node);
+    };
+
+    const handleDragStart = (e: React.DragEvent) => {
+        e.dataTransfer.setData('srcPath', node.path);
+        e.dataTransfer.effectAllowed = 'move';
+    };
+
+    const handleDragOver = (e: React.DragEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (node.type === 'folder') {
+            setIsDragOver(true);
+            e.dataTransfer.dropEffect = 'move';
+        }
+    };
+
+    const handleDragLeave = () => {
+        setIsDragOver(false);
+    };
+
+    const handleDrop = (e: React.DragEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setIsDragOver(false);
+        
+        const srcPath = e.dataTransfer.getData('srcPath');
+        if (srcPath && srcPath !== node.path) {
+            onMove(srcPath, node.path);
+        }
+    };
+
     return (
         <div className="tree-node">
             <div 
-                className={`tree-item ${isLoading ? 'loading' : ''}`} 
+                className={`tree-item ${isLoading ? 'loading' : ''} ${selectedPath === node.path ? 'selected' : ''} ${isDragOver ? 'drag-over' : ''}`} 
                 style={{ paddingLeft: `${depth * 10 + 5}px` }}
                 onClick={handleClick}
+                onContextMenu={handleContextMenu}
+                draggable
+                onDragStart={handleDragStart}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
             >
                 {node.type === 'folder' && (
                     <span className="arrow-icon">
@@ -74,10 +122,20 @@ const TreeItem = ({ node, depth, onFileClick }: { node: TreeNode, depth: number,
                 <span className="node-name">{node.name}</span>
             </div>
             
-            {isOpen && children.length > 0 && (
+            {isOpen && node.children && node.children.length > 0 && (
                 <div className="tree-children">
-                    {children.map((child, index) => (
-                        <TreeItem key={index} node={child} depth={depth + 1} onFileClick={onFileClick} />
+                    {node.children.map((child, index) => (
+                        <TreeItem 
+                            key={`${child.path}-${index}`} 
+                            node={child} 
+                            depth={depth + 1} 
+                            onFileClick={onFileClick} 
+                            selectedPath={selectedPath}
+                            onSelect={onSelect}
+                            onExpand={onExpand}
+                            onContextMenu={onContextMenu}
+                            onMove={onMove}
+                        />
                     ))}
                 </div>
             )}
@@ -88,15 +146,30 @@ const TreeItem = ({ node, depth, onFileClick }: { node: TreeNode, depth: number,
 interface ExplorerTreeProps {
     onFileClick: (name: string, type: FileType, path: string) => void;
     externalTree?: TreeNode;
+    selectedPath: string | null;
+    onSelect: (path: string) => void;
+    onExpand: (path: string) => void;
+    onContextMenu: (e: React.MouseEvent, node: TreeNode) => void;
+    onMove: (srcPath: string, targetPath: string) => void;
 }
 
-export default function ExplorerTree({ onFileClick, externalTree }: ExplorerTreeProps) {
+export default function ExplorerTree({ onFileClick, externalTree, selectedPath, onSelect, onExpand, onContextMenu, onMove }: ExplorerTreeProps) {
     const displayTree = externalTree ? [externalTree] : [defaultTree];
 
     return (
         <div className="explorer_tree">
             {displayTree.map((node, index) => (
-                <TreeItem key={index} node={node} depth={0} onFileClick={onFileClick} />
+                <TreeItem 
+                    key={index} 
+                    node={node} 
+                    depth={0} 
+                    onFileClick={onFileClick} 
+                    selectedPath={selectedPath}
+                    onSelect={onSelect}
+                    onExpand={onExpand}
+                    onContextMenu={onContextMenu}
+                    onMove={onMove}
+                />
             ))}
         </div>
     );

@@ -8,6 +8,8 @@ export default function EditorEmpty({ openFolder }: { openFolder: () => void }) 
         <div className="shortcuts">
             <p onClick={openFolder}><span>CTRL + O</span> Open folder</p>
             <p><span>CTRL + S</span> Save file</p>
+            <p><span>CTRL + N</span> Create new file</p>
+            <p><span>CTRL + SHIFT + N</span> Create new folder</p>
         </div>
     </div>
   )

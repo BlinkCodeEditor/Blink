@@ -7,9 +7,26 @@ import ExplorerTree from './ExplorerTree'
 interface ExplorerProps {
     onFileClick: (name: string, type: FileType, path: string) => void;
     tree: any;
+    onNewFile: () => void;
+    onNewFolder: () => void;
+    selectedPath: string | null;
+    onSelect: (path: string) => void;
+    onExpand: (path: string) => void;
+    onContextMenu: (e: React.MouseEvent, node: any) => void;
+    onMove: (srcPath: string, targetPath: string) => void;
 }
 
-export default function Explorer({ onFileClick, tree }: ExplorerProps) {
+export default function Explorer({ 
+  onFileClick, 
+  tree, 
+  onNewFile, 
+  onNewFolder,
+  selectedPath,
+  onSelect,
+  onExpand,
+  onContextMenu,
+  onMove
+}: ExplorerProps) {
   const [width, setWidth] = useState(250);
   const isResizing = useRef(false);
 
@@ -46,8 +63,16 @@ export default function Explorer({ onFileClick, tree }: ExplorerProps) {
 
   return (
     <div className="explorer" style={{ width: `${width}px` }}>
-        <ExplorerHeader />
-        <ExplorerTree onFileClick={onFileClick} externalTree={tree} />
+        <ExplorerHeader onNewFile={onNewFile} onNewFolder={onNewFolder} />
+        <ExplorerTree 
+            onFileClick={onFileClick} 
+            externalTree={tree} 
+            selectedPath={selectedPath}
+            onSelect={onSelect}
+            onExpand={onExpand}
+            onContextMenu={onContextMenu}
+            onMove={onMove}
+        />
         <div className="explorer-resizer" onMouseDown={startResizing} />
     </div>
   )
