@@ -1,0 +1,58 @@
+{
+  "$schema": "https://raw.githubusercontent.com/electron-userland/electron-builder/master/packages/app-builder-lib/scheme.json",
+  "appId": "com.codeadiksuu.blink",
+  "asar": true,
+  "productName": "Blink",
+  "compression": "maximum",          // ← better ratio (build ~20–60 s slower)
+  "directories": {
+    "output": "release/${version}"
+  },
+  "files": [
+    "dist",
+    "dist-electron",
+    "!release/**",                    // prevent recursive packing of old builds
+    "!**/*.map",                      // source maps – useless in production
+    "!**/*.spec.*",
+    "!**/__tests__/**",
+    "!**/*.test.*",
+    "!**/node_modules/.vite/**",      // Vite cache junk
+    "!**/*.md",                       // most readmes/changelogs
+    "!**/.github/**",
+    "!**/docs/**",
+    "!**/.DS_Store",
+    "!**/Thumbs.db"
+    // If you know specific heavy folders/packages, add more:
+    // "!**/node_modules/some-heavy-lib/**"
+  ],
+  "extraResources": [
+    // Only add if main process really needs extra files (fonts, binaries, etc.)
+  ],
+  "mac": {
+    "target": ["dmg"],
+    "artifactName": "${productName}-Mac-${version}-Installer.${ext}"
+  },
+  "win": {
+    "target": [
+      {
+        "target": "nsis",
+        "arch": ["x64"]
+      }
+    ],
+    "icon": "public/logo.ico",
+    "artifactName": "${productName} Setup ${version}.${ext}"
+  },
+  "nsis": {
+    "oneClick": false,
+    "perMachine": false,
+    "allowToChangeInstallationDirectory": true,
+    "deleteAppDataOnUninstall": false,
+    "multiLanguageInstaller": true,           // optional – better UX
+    "installerLanguages": ["en_US", "ru_RU"]           // ← restrict languages, saves ~10–30 MB
+    // or even just "en_US" if English-only
+  },
+  "linux": {
+    "target": ["AppImage"],
+    "icon": "public/logo.png",
+    "artifactName": "${productName} ${version}.${ext}"
+  }
+}

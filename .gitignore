@@ -28,5 +28,5 @@ release/
 
 # Electron
 dist-electron
-electron
-electron-builder.json5
+# electron
+# electron-builder.json5

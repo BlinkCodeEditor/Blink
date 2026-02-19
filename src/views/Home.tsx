@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar/Navbar";
 import Sidebar from "../components/Sidebar/Sidebar";
 import Explorer from "../components/Explorer/Explorer";
@@ -7,6 +7,8 @@ import { FileType } from "../utils/typeIcon";
 import { useKeybinds } from "../utils/keybinds";
 import BottomBar from "../components/BottomBar/BottomBar";
 import ProblemsPanel from "../components/BottomBar/ProblemsPanel";
+import Changelog from "../components/Changelog/Changelog";
+import pkg from "../../package.json";
 
 export interface TabData {
     name: string;
@@ -23,6 +25,19 @@ export default function Home() {
     const [cursorPos, setCursorPos] = useState({ line: 1, column: 1 });
     const [markers, setMarkers] = useState<any[]>([]);
     const [showProblems, setShowProblems] = useState(false);
+    const [showChangelog, setShowChangelog] = useState(false);
+
+    useEffect(() => {
+        const lastSeenVersion = localStorage.getItem('lastSeenVersion');
+        if (lastSeenVersion !== pkg.version) {
+            setShowChangelog(true);
+        }
+    }, []);
+
+    const handleCloseChangelog = () => {
+        localStorage.setItem('lastSeenVersion', pkg.version);
+        setShowChangelog(false);
+    };
 
     const openFolder = async () => {
         const folderTree = await (window as any).electronAPI.invoke('dialog:openDirectory');
@@ -126,6 +141,12 @@ export default function Home() {
                     markers={markers} 
                     onClose={() => setShowProblems(false)}
                     onJump={handleJumpToProblem}
+                />
+            )}
+            {showChangelog && (
+                <Changelog 
+                    version={pkg.version} 
+                    onClose={handleCloseChangelog} 
                 />
             )}
         </>
