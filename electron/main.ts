@@ -234,7 +234,13 @@ app.whenReady().then(() => {
             // With blink-resource://localhost/path, pathname will be /path
             let filePath = decodeURIComponent(url.pathname);
             
-            // On Linux/POSIX, if pathname has a double slash (e.g. //home), simplify it
+            // On Windows, the pathname returned by new URL() usually starts with a slash 
+            // before the drive letter (e.g., "/C:/path"). We need to remove it.
+            if (process.platform === 'win32' && filePath.startsWith('/') && filePath.length > 2 && filePath[2] === ':') {
+                filePath = filePath.slice(1);
+            }
+            
+            // On Linux/POSIX, if pathname still has a double slash (though less likely with localhost), simplify it
             if (filePath.startsWith('//')) {
                 filePath = filePath.slice(1);
             }

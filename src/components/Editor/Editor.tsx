@@ -93,7 +93,7 @@ export default function Editor({ tabs, activeTabIndex, setActiveTabIndex, onClos
 
                             // Register global editor opener for Ctrl+Click navigation
                             const openerDisposable = monaco.editor.registerEditorOpener({
-                                openCodeEditor: (source: any, resource: any, selection: any) => {
+                                openCodeEditor: (_source: any, resource: any, _selection: any) => {
                                     const path = resource.path;
                                     // Deriving name and type from path
                                     const name = path.split('/').pop() || '';
