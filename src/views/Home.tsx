@@ -68,14 +68,12 @@ export default function Home() {
         if (existingIndex !== -1) {
             setActiveTabIndex(existingIndex);
             setCursorPos({ line: 1, column: 1 });
-            setMarkers([]);
         } else {
             const content = await (window as any).electronAPI.invoke('file:read', path);
             const newTab: TabData = { name, type, path, content: content || '', isModified: false };
             setTabs([...tabs, newTab]);
             setActiveTabIndex(tabs.length);
             setCursorPos({ line: 1, column: 1 });
-            setMarkers([]);
         }
     };
 
@@ -86,7 +84,6 @@ export default function Home() {
             setActiveTabIndex(Math.max(0, newTabs.length - 1));
         }
         setCursorPos({ line: 1, column: 1 });
-        setMarkers([]);
     };
 
     const handleContentChange = (newContent: string) => {
@@ -100,12 +97,39 @@ export default function Home() {
         });
     };
 
-    const handleJumpToProblem = (line: number, column: number) => {
-        const editor = (window as any).editorInstance;
-        if (editor) {
-            editor.setPosition({ lineNumber: line, column: column });
-            editor.revealPositionInCenter({ lineNumber: line, column: column });
-            editor.focus();
+    const handleJumpToProblem = async (path: string, line: number, column: number) => {
+        // Find if file is already open
+        const existingIndex = tabs.findIndex(tab => tab.path === path);
+        if (existingIndex !== -1) {
+            setActiveTabIndex(existingIndex);
+            // We need to wait for the tab to be active before jumping
+            setTimeout(() => {
+                const editor = (window as any).editorInstance;
+                if (editor) {
+                    editor.setPosition({ lineNumber: line, column: column });
+                    editor.revealPositionInCenter({ lineNumber: line, column: column });
+                    editor.focus();
+                }
+            }, 50);
+        } else {
+            // Open the file first
+            const name = path.split('/').pop() || '';
+            const type = (name.split('.').pop() || 'file') as any;
+            const content = await (window as any).electronAPI.invoke('file:read', path);
+            const newTab: TabData = { name, type, path, content: content || '', isModified: false };
+            
+            const newTabs = [...tabs, newTab];
+            setTabs(newTabs);
+            setActiveTabIndex(newTabs.length - 1);
+            
+            setTimeout(() => {
+                const editor = (window as any).editorInstance;
+                if (editor) {
+                    editor.setPosition({ lineNumber: line, column: column });
+                    editor.revealPositionInCenter({ lineNumber: line, column: column });
+                    editor.focus();
+                }
+            }, 100);
         }
     };
 
@@ -123,17 +147,19 @@ export default function Home() {
                         setCursorPos({ line: 1, column: 1 });
                     }}
                     onCloseTab={handleCloseTab}
-                    openFolder={openFolder}
                     onContentChange={handleContentChange}
                     onCursorChange={setCursorPos}
                     onValidationChange={setMarkers}
+                    openFolder={openFolder}
+                    tree={tree}
+                    onOpenFile={handleFileClick}
                 />
             </main>
             <BottomBar 
                 activeFile={tabs[activeTabIndex]} 
                 cursorPos={cursorPos}
                 errors={markers.filter(m => m.severity === 8).length}
-                warnings={markers.filter(m => m.severity === 4).length}
+                warnings={markers.filter(m => m.severity === 4 || m.severity === 2 || m.severity === 1).length}
                 onToggleProblems={() => setShowProblems(!showProblems)}
             />
             {showProblems && (

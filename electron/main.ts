@@ -27,31 +27,71 @@ process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL
 
 let win: BrowserWindow | null;
 
-async function getFolderTree(dirPath: string): Promise<any> {
-    const stats = await fs.stat(dirPath);
-    const name = path.basename(dirPath);
+const EXCLUDED_DIRS = ['.git', 'node_modules', 'dist', 'build', '.next', 'vendor', '.DS_Store'];
 
-    if (stats.isDirectory()) {
-        const children = await fs.readdir(dirPath);
-        const childrenNodes = await Promise.all(
-            children.map(child => getFolderTree(path.join(dirPath, child)))
-        );
-        return {
-            name,
-            type: 'folder',
-            path: dirPath,
-            children: childrenNodes.sort((a, b) => {
-                if (a.type === b.type) return a.name.localeCompare(b.name);
-                return a.type === 'folder' ? -1 : 1;
-            })
-        };
-    } else {
-        const ext = path.extname(name).slice(1).toLowerCase();
-        return {
-            name,
-            type: ext || 'file',
-            path: dirPath
-        };
+async function getFolderTree(dirPath: string, recursive: boolean = false): Promise<any> {
+    const originalNoAsar = process.noAsar;
+    process.noAsar = true;
+    try {
+        const stats = await fs.stat(dirPath);
+        const name = path.basename(dirPath);
+
+        if (stats.isDirectory()) {
+            const children = await fs.readdir(dirPath);
+            let childrenNodes: any[] = [];
+            
+            if (recursive) {
+                childrenNodes = await Promise.all(
+                    children
+                        .filter(child => !EXCLUDED_DIRS.includes(child))
+                        .map(child => getFolderTree(path.join(dirPath, child), true))
+                );
+                childrenNodes = childrenNodes.filter(n => n !== null);
+            } else {
+                // Shallow fetch: just identify which children have children
+                childrenNodes = await Promise.all(
+                    children.map(async (child) => {
+                        try {
+                            const childPath = path.join(dirPath, child);
+                            const childStats = await fs.stat(childPath);
+                            return {
+                                name: child,
+                                type: childStats.isDirectory() ? 'folder' : (path.extname(child).slice(1).toLowerCase() || 'file'),
+                                path: childPath,
+                                hasChildren: childStats.isDirectory()
+                            };
+                        } catch (e) {
+                            console.error(`Failed to stat ${child}:`, e);
+                            return null;
+                        }
+                    })
+                );
+                childrenNodes = childrenNodes.filter(n => n !== null);
+            }
+
+            return {
+                name,
+                type: 'folder',
+                path: dirPath,
+                children: childrenNodes.sort((a, b) => {
+                    if (a.type === b.type) return a.name.localeCompare(b.name);
+                    return a.type === 'folder' ? -1 : 1;
+                }),
+                hasChildren: children.length > 0
+            };
+        } else {
+            const ext = path.extname(name).slice(1).toLowerCase();
+            return {
+                name,
+                type: ext || 'file',
+                path: dirPath
+            };
+        }
+    } catch (error) {
+        console.error(`Failed to get folder tree for ${dirPath}:`, error);
+        return null;
+    } finally {
+        process.noAsar = originalNoAsar;
     }
 }
 
@@ -127,7 +167,12 @@ function createWindow() {
         });
         if (canceled) return null;
         
-        return await getFolderTree(filePaths[0]);
+        return await getFolderTree(filePaths[0], false);
+    });
+
+    ipcMain.handle('directory:getChildren', async (_, dirPath: string) => {
+        const tree = await getFolderTree(dirPath, false);
+        return tree ? tree.children : [];
     });
 
     ipcMain.handle('file:read', async (_, filePath: string) => {

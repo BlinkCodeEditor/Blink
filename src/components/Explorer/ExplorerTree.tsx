@@ -2,10 +2,19 @@ import { useState } from 'react'
 import { typeIconMap, FileType } from '../../utils/typeIcon';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronRight, faChevronDown } from '@fortawesome/free-solid-svg-icons';
-import { defaultTree, TreeNode } from './mockTree';
+import { defaultTree } from './mockTree';
+export interface TreeNode {
+    name: string;
+    type: FileType | string;
+    path: string;
+    children?: TreeNode[];
+    hasChildren?: boolean;
+}
 
 const TreeItem = ({ node, depth, onFileClick }: { node: TreeNode, depth: number, onFileClick: (name: string, type: FileType, path: string) => void }) => {
     const [isOpen, setIsOpen] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [children, setChildren] = useState<TreeNode[]>(node.children || []);
     
     // Determine icon and color
     let iconData = typeIconMap.file;
@@ -18,18 +27,34 @@ const TreeItem = ({ node, depth, onFileClick }: { node: TreeNode, depth: number,
         }
     }
 
-    const handleClick = () => {
+    const handleClick = async () => {
         if (node.type === 'folder') {
-            setIsOpen(!isOpen);
+            const nextOpenState = !isOpen;
+            setIsOpen(nextOpenState);
+            
+            if (nextOpenState && children.length === 0 && node.hasChildren) {
+                setIsLoading(true);
+                try {
+                    const fetchedChildren = await (window as any).electronAPI.invoke('directory:getChildren', node.path);
+                    if (fetchedChildren) {
+                        setChildren(fetchedChildren);
+                    }
+                } catch (error) {
+                    console.error('Failed to fetch children:', error);
+                } finally {
+                    setIsLoading(false);
+                }
+            }
         } else {
-            onFileClick(node.name, node.type, node.path);
+            // Ensure we handle non-standard types safely
+            onFileClick(node.name, node.type as FileType, node.path);
         }
     };
 
     return (
         <div className="tree-node">
             <div 
-                className="tree-item" 
+                className={`tree-item ${isLoading ? 'loading' : ''}`} 
                 style={{ paddingLeft: `${depth * 10 + 5}px` }}
                 onClick={handleClick}
             >
@@ -44,14 +69,14 @@ const TreeItem = ({ node, depth, onFileClick }: { node: TreeNode, depth: number,
                     className={`file-icon ${node.type}`}
                     style={{ color: iconData.color }}
                 >
-                    <FontAwesomeIcon icon={iconData.icon} />
+                    <FontAwesomeIcon icon={isLoading ? typeIconMap.folder.icon : iconData.icon} spin={isLoading} />
                 </span>
                 <span className="node-name">{node.name}</span>
             </div>
             
-            {isOpen && node.children && (
+            {isOpen && children.length > 0 && (
                 <div className="tree-children">
-                    {node.children.map((child, index) => (
+                    {children.map((child, index) => (
                         <TreeItem key={index} node={child} depth={depth + 1} onFileClick={onFileClick} />
                     ))}
                 </div>

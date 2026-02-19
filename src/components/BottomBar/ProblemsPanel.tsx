@@ -6,7 +6,7 @@ import './_ProblemsPanel.scss';
 interface ProblemsPanelProps {
     markers: any[];
     onClose: () => void;
-    onJump: (line: number, column: number) => void;
+    onJump: (path: string, line: number, column: number) => void;
 }
 
 export default function ProblemsPanel({ markers, onClose, onJump }: ProblemsPanelProps) {
@@ -44,6 +44,18 @@ export default function ProblemsPanel({ markers, onClose, onJump }: ProblemsPane
         };
     }, [handleMouseMove, stopResizing]);
 
+    const getNameFromUri = (uri: any) => {
+        if (!uri) return 'Unknown';
+        const str = uri.toString();
+        return str.split('/').pop() || str;
+    };
+
+    const getPathFromUri = (uri: any) => {
+        if (!uri) return '';
+        const str = uri.toString();
+        return str.replace(/^file:\/\//, '');
+    };
+
     return (
         <div className="problems_panel" style={{ height: `${height}px` }}>
             <div className="resize_handle" onMouseDown={startResizing} />
@@ -59,7 +71,7 @@ export default function ProblemsPanel({ markers, onClose, onJump }: ProblemsPane
                         <div 
                             key={index} 
                             className={`problem_item ${marker.severity === 8 ? 'error' : 'warning'}`}
-                            onClick={() => onJump(marker.startLineNumber, marker.startColumn)}
+                            onClick={() => onJump(getPathFromUri(marker.resource), marker.startLineNumber, marker.startColumn)}
                         >
                             <FontAwesomeIcon 
                                 icon={marker.severity === 8 ? faTimesCircle : faExclamationCircle} 
@@ -68,7 +80,7 @@ export default function ProblemsPanel({ markers, onClose, onJump }: ProblemsPane
                             <div className="problem_details">
                                 <span className="message">{marker.message}</span>
                                 <span className="location">
-                                    [Ln {marker.startLineNumber}, Col {marker.startColumn}]
+                                    {getNameFromUri(marker.resource)} [Ln {marker.startLineNumber}, Col {marker.startColumn}]
                                 </span>
                             </div>
                         </div>

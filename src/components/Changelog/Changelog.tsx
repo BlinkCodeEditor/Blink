@@ -12,16 +12,16 @@ export default function Changelog({ version, onClose }: ChangelogProps) {
         {
             type: 'New Features',
             items: [
-                'Changelog modal introduced in the bottom-right corner.',
-                'Glassmorphism UI inspired by modern editors.',
-                'Version-aware display persistence.'
+                'Link clicking (beta)',
             ]
         },
         {
             type: 'Improvements',
             items: [
-                'Enhanced app startup check for version updates.',
-                'Better UI consistency across panels.'
+                'Improved application optimizations, files are now loaded faster.',
+                'We fixed an issue where some projects were not loading.',
+                "We've significantly improved support for frontend languages",
+                'Fixed a bug where warnings in the Problems panel were not displayed as an icon with a numeric value (before this, only errors worked)'
             ]
         }
     ];
