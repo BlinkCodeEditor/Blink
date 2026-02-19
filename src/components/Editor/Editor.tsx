@@ -7,6 +7,8 @@ import { getLanguageByFilename } from '../../utils/languageMap'
 import EditorEmpty from './EditorEmpty'
 import { syncWorkspaceWithMonaco, setupCompilerOptions, TreeNode } from '../../utils/monacoSync'
 import { FileType } from '../../utils/typeIcon'
+import ImagePreview from './ImagePreview'
+import './_ImagePreview.scss'
 
 interface EditorProps {
     tabs: TabData[];
@@ -72,84 +74,88 @@ export default function Editor({ tabs, activeTabIndex, setActiveTabIndex, onClos
         />
         <div className="editor_main">
             {activeFile ? (
-                <MonacoEditor
-                    height="100%"
-                    language={getLanguageByFilename(activeFile.name)}
-                    path={activeFile.path}
-                    value={activeFile.content || ''}
-                    theme="vs-dark"
-                    beforeMount={(monaco: any) => {
-                        const syncDisposables = setupCompilerOptions(monaco, tree?.path);
-                        disposablesRef.current.push(syncDisposables);
-                    }}
-                    onChange={(value) => onContentChange(value || '')}
-                    onMount={(editor: any, monaco: any) => {
-                        monacoRef.current = monaco;
+                ['png', 'jpg', 'jpeg', 'gif', 'svg', 'ico'].includes(activeFile.name.split('.').pop()?.toLowerCase() || '') ? (
+                    <ImagePreview path={activeFile.path} name={activeFile.name} />
+                ) : (
+                    <MonacoEditor
+                        height="100%"
+                        language={getLanguageByFilename(activeFile.name)}
+                        path={activeFile.path}
+                        value={activeFile.content || ''}
+                        theme="vs-dark"
+                        beforeMount={(monaco: any) => {
+                            const syncDisposables = setupCompilerOptions(monaco, tree?.path);
+                            disposablesRef.current.push(syncDisposables);
+                        }}
+                        onChange={(value) => onContentChange(value || '')}
+                        onMount={(editor: any, monaco: any) => {
+                            monacoRef.current = monaco;
 
-                        // Register global editor opener for Ctrl+Click navigation
-                        const openerDisposable = monaco.editor.registerEditorOpener({
-                            openCodeEditor: (source: any, resource: any, selection: any) => {
-                                const path = resource.path;
-                                // Deriving name and type from path
-                                const name = path.split('/').pop() || '';
-                                const ext = name.split('.').pop() || '';
-                                const type = (ext || 'file') as any;
-                                
-                                onOpenFile(name, type, path);
-                                return true;
-                            }
-                        });
-                        disposablesRef.current.push(openerDisposable);
-
-                        // Link existing models to the editor
-                        tabs.forEach(tab => {
-                            const uri = monaco.Uri.file(tab.path);
-                            if (!monaco.editor.getModel(uri)) {
-                                monaco.editor.createModel(tab.content || '', getLanguageByFilename(tab.name), uri);
-                            }
-                        });
-
-                        // Initial sync of tree if available
-                        if (tree) {
-                            syncWorkspaceWithMonaco(monaco, tree);
-                        }
-
-                        // Immediate marker reporting
-                        const markers = monaco.editor.getModelMarkers({});
-                        onValidationChange(markers);
-
-                        const cursorListener = editor.onDidChangeCursorPosition((e: any) => {
-                            onCursorChange({
-                                line: e.position.lineNumber,
-                                column: e.position.column
+                            // Register global editor opener for Ctrl+Click navigation
+                            const openerDisposable = monaco.editor.registerEditorOpener({
+                                openCodeEditor: (source: any, resource: any, selection: any) => {
+                                    const path = resource.path;
+                                    // Deriving name and type from path
+                                    const name = path.split('/').pop() || '';
+                                    const ext = name.split('.').pop() || '';
+                                    const type = (ext || 'file') as any;
+                                    
+                                    onOpenFile(name, type, path);
+                                    return true;
+                                }
                             });
-                        });
-                        disposablesRef.current.push(cursorListener);
+                            disposablesRef.current.push(openerDisposable);
 
-                        const markersListener = monaco.editor.onDidChangeMarkers(() => {
+                            // Link existing models to the editor
+                            tabs.forEach(tab => {
+                                const uri = monaco.Uri.file(tab.path);
+                                if (!monaco.editor.getModel(uri)) {
+                                    monaco.editor.createModel(tab.content || '', getLanguageByFilename(tab.name), uri);
+                                }
+                            });
+
+                            // Initial sync of tree if available
+                            if (tree) {
+                                syncWorkspaceWithMonaco(monaco, tree);
+                            }
+
+                            // Immediate marker reporting
                             const markers = monaco.editor.getModelMarkers({});
                             onValidationChange(markers);
-                        });
-                        disposablesRef.current.push(markersListener);
-                        
-                        (window as any).editorInstance = editor;
-                    }}
-                    options={{
-                        fontSize: 14,
-                        minimap: { enabled: false },
-                        scrollBeyondLastLine: false,
-                        automaticLayout: true,
-                        fontFamily: 'Geist Mono, monospace',
-                        lineHeight: 24,
-                        padding: { top: 20 },
-                        wordBasedSuggestions: 'allDocuments',
-                        suggestOnTriggerCharacters: true,
-                        acceptSuggestionOnEnter: 'on',
-                        tabCompletion: 'on',
-                        links: true,
-                        renderValidationDecorations: 'on',
-                    }}
-                />
+
+                            const cursorListener = editor.onDidChangeCursorPosition((e: any) => {
+                                onCursorChange({
+                                    line: e.position.lineNumber,
+                                    column: e.position.column
+                                });
+                            });
+                            disposablesRef.current.push(cursorListener);
+
+                            const markersListener = monaco.editor.onDidChangeMarkers(() => {
+                                const markers = monaco.editor.getModelMarkers({});
+                                onValidationChange(markers);
+                            });
+                            disposablesRef.current.push(markersListener);
+                            
+                            (window as any).editorInstance = editor;
+                        }}
+                        options={{
+                            fontSize: 14,
+                            minimap: { enabled: false },
+                            scrollBeyondLastLine: false,
+                            automaticLayout: true,
+                            fontFamily: 'Geist Mono, monospace',
+                            lineHeight: 24,
+                            padding: { top: 20 },
+                            wordBasedSuggestions: 'allDocuments',
+                            suggestOnTriggerCharacters: true,
+                            acceptSuggestionOnEnter: 'on',
+                            tabCompletion: 'on',
+                            links: true,
+                            renderValidationDecorations: 'on',
+                        }}
+                    />
+                )
             ) : (
                 <EditorEmpty openFolder={openFolder} />
             )}

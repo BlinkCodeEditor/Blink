@@ -69,7 +69,8 @@ export default function Home() {
             setActiveTabIndex(existingIndex);
             setCursorPos({ line: 1, column: 1 });
         } else {
-            const content = await (window as any).electronAPI.invoke('file:read', path);
+            const isImage = ['png', 'jpg', 'jpeg', 'gif', 'svg', 'ico'].includes(name.split('.').pop()?.toLowerCase() || '');
+            const content = isImage ? '' : await (window as any).electronAPI.invoke('file:read', path);
             const newTab: TabData = { name, type, path, content: content || '', isModified: false };
             setTabs([...tabs, newTab]);
             setActiveTabIndex(tabs.length);

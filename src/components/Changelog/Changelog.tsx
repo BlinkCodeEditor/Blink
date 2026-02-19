@@ -13,6 +13,7 @@ export default function Changelog({ version, onClose }: ChangelogProps) {
             type: 'New Features',
             items: [
                 'Link clicking (beta)',
+                'Image preview for .png .jpg .jpeg .gif .svg and .ico files'
             ]
         },
         {

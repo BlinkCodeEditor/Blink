@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, dialog } from "electron";
+import { app, BrowserWindow, ipcMain, dialog, protocol } from "electron";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 import fs from "node:fs/promises";
@@ -214,6 +214,11 @@ app.on("window-all-closed", () => {
     }
 });
 
+// Register custom protocol for local resources
+protocol.registerSchemesAsPrivileged([
+    { scheme: 'blink-resource', privileges: { secure: true, standard: true, supportFetchAPI: true, bypassCSP: true } }
+]);
+
 app.on("activate", () => {
     // On OS X it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
@@ -222,4 +227,40 @@ app.on("activate", () => {
     }
 });
 
-app.whenReady().then(createWindow);
+app.whenReady().then(() => {
+    protocol.handle('blink-resource', async (request) => {
+        try {
+            const url = new URL(request.url);
+            // With blink-resource://localhost/path, pathname will be /path
+            let filePath = decodeURIComponent(url.pathname);
+            
+            // On Linux/POSIX, if pathname has a double slash (e.g. //home), simplify it
+            if (filePath.startsWith('//')) {
+                filePath = filePath.slice(1);
+            }
+
+            const ext = path.extname(filePath).toLowerCase();
+            const mimeTypes: Record<string, string> = {
+                '.png': 'image/png',
+                '.jpg': 'image/jpeg',
+                '.jpeg': 'image/jpeg',
+                '.gif': 'image/gif',
+                '.svg': 'image/svg+xml',
+                '.ico': 'image/x-icon'
+            };
+
+            const data = await fs.readFile(filePath);
+            return new Response(data, {
+                status: 200,
+                headers: { 
+                    'Content-Type': mimeTypes[ext] || 'application/octet-stream',
+                    'Access-Control-Allow-Origin': '*' // Good practice for custom protocols
+                }
+            });
+        } catch (error) {
+            console.error('[blink-resource] Failed to serve:', request.url, error);
+            return new Response(null, { status: 404 });
+        }
+    });
+    createWindow();
+});
