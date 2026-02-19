@@ -53,6 +53,7 @@
   "linux": {
     "target": ["AppImage"],
     "icon": "public/logo.png",
+    "category": "Development",
     "artifactName": "${productName} ${version}.${ext}"
   }
 }

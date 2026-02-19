@@ -62,7 +62,7 @@ export default function Home() {
             : await (window as any).electronAPI.invoke('path:dirname', contextMenu.node.path);
 
         const basename = await (window as any).electronAPI.invoke('path:basename', clipboard.path);
-        const dest = `${targetDir}/${basename}`;
+        const dest = await (window as any).electronAPI.invoke('path:join', targetDir, basename);
 
         if (clipboard.type === 'copy') {
             await (window as any).electronAPI.invoke('file:copy', clipboard.path, dest);
@@ -111,7 +111,7 @@ export default function Home() {
     const handleFinishRename = async (newName: string) => {
         if (!renamePath) return;
         const parentDir = await (window as any).electronAPI.invoke('path:dirname', renamePath);
-        const newPath = `${parentDir}/${newName}`;
+        const newPath = await (window as any).electronAPI.invoke('path:join', parentDir, newName);
         
         const success = await (window as any).electronAPI.invoke('file:rename', renamePath, newPath);
         if (success) {
@@ -159,7 +159,7 @@ export default function Home() {
     const handleMove = async (srcPath: string, targetPath: string) => {
         // basename of src
         const basename = await (window as any).electronAPI.invoke('path:basename', srcPath);
-        const destPath = `${targetPath}/${basename}`;
+        const destPath = await (window as any).electronAPI.invoke('path:join', targetPath, basename);
         
         // Don't move if target is same as current parent
         const currentParent = await (window as any).electronAPI.invoke('path:dirname', srcPath);
@@ -232,7 +232,7 @@ export default function Home() {
             }
         }
         
-        const fullPath = `${targetParentPath}/${name}`;
+        const fullPath = await (window as any).electronAPI.invoke('path:join', targetParentPath, name);
         const channel = creationType === 'file' ? 'file:create' : 'directory:create';
         const success = await (window as any).electronAPI.invoke(channel, fullPath);
         
@@ -424,7 +424,7 @@ export default function Home() {
                     setRenamePath(null);
                 }}
                 onCreate={renamePath ? handleFinishRename : handleCreateItem}
-                initialValue={renamePath ? renamePath.split('/').pop() : ''}
+                initialValue={renamePath ? contextMenu?.node.name : ''}
             />
             {contextMenu && (
                 <ContextMenu 

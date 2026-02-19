@@ -183,6 +183,10 @@ function createWindow() {
         return path.dirname(filePath);
     });
 
+    ipcMain.handle('path:join', async (_, ...paths: string[]) => {
+        return path.join(...paths);
+    });
+
     ipcMain.handle('path:basename', async (_, filePath: string) => {
         return path.basename(filePath);
     });

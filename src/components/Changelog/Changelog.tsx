@@ -23,7 +23,8 @@ export default function Changelog({ version, onClose }: ChangelogProps) {
         {
             type: 'Improvements',
             items: [
-                'Added new shortcuts to home page'
+                'Added new shortcuts to home page',
+                'Build also available for Linux'
             ]
         }
     ];
