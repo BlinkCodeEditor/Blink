@@ -37,6 +37,7 @@ const TerminalPanel = forwardRef<TerminalPanelHandle, TerminalPanelProps>(
 
         useEffect(() => {
             if (!containerRef.current) return;
+            if (!cwd) return;
 
             // ── Create xterm instance ─────────────────────────────────────────
             const term = new Terminal({

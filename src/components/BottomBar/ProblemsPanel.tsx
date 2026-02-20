@@ -23,14 +23,14 @@ interface ProblemsPanelProps {
 }
 
 // Local storage keys
-const TERMINAL_TABS_KEY = 'blink_terminal_tabs';
-const TERMINAL_ACTIVE_KEY = 'blink_terminal_active';
+const getTerminalTabsKey = (cwd?: string) => `blink_terminal_tabs_${cwd || 'default'}`;
+const getTerminalActiveKey = (cwd?: string) => `blink_terminal_active_${cwd || 'default'}`;
 
 // Load saved tabs from localStorage
-const loadSavedTabs = (): { tabs: TerminalTab[], activeId: string } | null => {
+const loadSavedTabs = (cwd?: string): { tabs: TerminalTab[], activeId: string } | null => {
     try {
-        const savedTabs = localStorage.getItem(TERMINAL_TABS_KEY);
-        const savedActiveId = localStorage.getItem(TERMINAL_ACTIVE_KEY);
+        const savedTabs = localStorage.getItem(getTerminalTabsKey(cwd));
+        const savedActiveId = localStorage.getItem(getTerminalActiveKey(cwd));
         
         if (savedTabs && savedActiveId) {
             const tabs = JSON.parse(savedTabs) as TerminalTab[];
@@ -48,10 +48,10 @@ const loadSavedTabs = (): { tabs: TerminalTab[], activeId: string } | null => {
 };
 
 // Save tabs to localStorage
-const saveTabs = (tabs: TerminalTab[], activeId: string) => {
+const saveTabs = (tabs: TerminalTab[], activeId: string, cwd?: string) => {
     try {
-        localStorage.setItem(TERMINAL_TABS_KEY, JSON.stringify(tabs));
-        localStorage.setItem(TERMINAL_ACTIVE_KEY, activeId);
+        localStorage.setItem(getTerminalTabsKey(cwd), JSON.stringify(tabs));
+        localStorage.setItem(getTerminalActiveKey(cwd), activeId);
     } catch (e) {
         console.error('Failed to save terminal tabs:', e);
     }
@@ -68,7 +68,7 @@ export default function ProblemsPanel({ markers, onClose, onJump, activeTab, set
     
     // Terminal tabs state - load from localStorage or use default
     const [tabs, setTabs] = useState<TerminalTab[]>(() => {
-        const saved = loadSavedTabs();
+        const saved = loadSavedTabs(cwd);
         if (saved && saved.tabs.length > 0) {
             terminalCounter = Math.max(...saved.tabs.map(t => {
                 const num = parseInt(t.id.split('_').pop() || '0');
@@ -84,9 +84,31 @@ export default function ProblemsPanel({ markers, onClose, onJump, activeTab, set
         }];
     });
     const [activeTerminalId, setActiveTerminalId] = useState<string>(() => {
-        const saved = loadSavedTabs();
+        const saved = loadSavedTabs(cwd);
         return saved?.activeId || tabs[0]?.id || '';
     });
+    
+    // Process cwd changes to reload specific terminal tab configurations
+    useEffect(() => {
+        const saved = loadSavedTabs(cwd);
+        if (saved && saved.tabs.length > 0) {
+            terminalCounter = Math.max(...saved.tabs.map(t => {
+                const num = parseInt(t.id.split('_').pop() || '0');
+                return isNaN(num) ? 0 : num;
+            }), 0);
+            setTabs(saved.tabs);
+            setActiveTerminalId(saved.activeId);
+        } else {
+            const defaultProfile = getDefaultProfile();
+            const newTab: TerminalTab = {
+                id: `terminal_${++terminalCounter}`,
+                profileId: defaultProfile.id,
+                name: `${defaultProfile.name} 1`
+            };
+            setTabs([newTab]);
+            setActiveTerminalId(newTab.id);
+        }
+    }, [cwd]);
     
     // Keep terminal instances alive for each tab
     const terminalRefs = useRef<Map<string, React.RefObject<TerminalPanelHandle>>>(new Map());
@@ -103,7 +125,7 @@ export default function ProblemsPanel({ markers, onClose, onJump, activeTab, set
         }
         // Save initial tabs to localStorage
         if (tabs.length > 0 && activeTerminalId) {
-            saveTabs(tabs, activeTerminalId);
+            saveTabs(tabs, activeTerminalId, cwd);
         }
     }, []);
     
@@ -118,7 +140,7 @@ export default function ProblemsPanel({ markers, onClose, onJump, activeTab, set
         
         setTabs(prev => {
             const newTabs = [...prev, newTab];
-            saveTabs(newTabs, newTab.id);
+            saveTabs(newTabs, newTab.id, cwd);
             return newTabs;
         });
         setActiveTerminalId(newTab.id);
@@ -160,7 +182,7 @@ export default function ProblemsPanel({ markers, onClose, onJump, activeTab, set
         
         setTabs(newTabs);
         setActiveTerminalId(newActiveId);
-        saveTabs(newTabs, newActiveId);
+        saveTabs(newTabs, newActiveId, cwd);
         terminalRefs.current.delete(tabId);
     }, [tabs, activeTerminalId]);
     
@@ -172,7 +194,7 @@ export default function ProblemsPanel({ markers, onClose, onJump, activeTab, set
                     ? { ...tab, profileId: profile.id, name: `${profile.name} ${tab.id.split('_').pop()}` } 
                     : tab
             );
-            saveTabs(newTabs, activeTerminalId);
+            saveTabs(newTabs, activeTerminalId, cwd);
             return newTabs;
         });
         setDropdownTargetTabId(null);
@@ -367,7 +389,7 @@ export default function ProblemsPanel({ markers, onClose, onJump, activeTab, set
                                 className={`terminal_instance ${activeTerminalId === tab.id ? 'active' : 'hidden'}`}
                             >
                                 <TerminalPanel 
-                                    key={`${tab.id}-${tab.profileId}`}
+                                    key={`${tab.id}-${tab.profileId}-${cwd}`}
                                     ref={(el) => {
                                         if (el) terminalRefs.current.set(tab.id, { current: el });
                                         else terminalRefs.current.delete(tab.id);
