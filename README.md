@@ -9,7 +9,8 @@ Blink Code Editor is a high-performance IDE built from the ground up to ensure e
 
 | Release Channel | Version | Stability | Available | Platforms |
 | :--- | :--- | :--- | :--- | :--- |
-| **Development** | v0.0.6-dev | Stable | Yes | Windows, Linux |
+| **Development** | v0.0.7-patch | Stable | Yes | Windows, Linux |
+| **Development** | v0.0.6-dev | Low | Yes | Windows, Linux |
 | **Development** | v0.0.5-dev | Mid | Yes | Windows |
 | **Development** | v0.0.4-dev | Mid | Yes | Windows |
 | **Development** | v0.0.3-dev | Mid | Yes | Windows |
