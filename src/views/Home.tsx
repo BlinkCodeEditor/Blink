@@ -138,6 +138,19 @@ export default function Home() {
         if (lastSeenVersion !== pkg.version) {
             setShowChangelog(true);
         }
+
+        const lastOpenedFolder = localStorage.getItem('lastOpenedFolder');
+        if (lastOpenedFolder) {
+            (window as any).electronAPI.invoke('directory:getTree', lastOpenedFolder).then((folderTree: any) => {
+                if (folderTree) {
+                    setTree(folderTree);
+                } else {
+                    localStorage.removeItem('lastOpenedFolder');
+                }
+            }).catch(() => {
+                localStorage.removeItem('lastOpenedFolder');
+            });
+        }
     }, []);
 
     const handleCloseChangelog = () => {
@@ -149,6 +162,7 @@ export default function Home() {
         const folderTree = await (window as any).electronAPI.invoke('dialog:openDirectory');
         if (folderTree) {
             setTree(folderTree);
+            localStorage.setItem('lastOpenedFolder', folderTree.path);
         }
     };
 

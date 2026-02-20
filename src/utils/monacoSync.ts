@@ -76,7 +76,7 @@ export async function syncWorkspaceWithMonaco(monaco: any, node: TreeNode) {
         
         // Only sync TS/JS files for module resolution
         const lang = getLanguageByFilename(node.name);
-        if (['typescript', 'javascript', 'javascriptreact', 'typescriptreact'].includes(lang)) {
+        if (['typescript', 'javascript'].includes(lang)) {
             if (!existingModel) {
                 // Initialize as empty for now, content will be loaded when opened
                 monaco.editor.createModel('', lang, uri);

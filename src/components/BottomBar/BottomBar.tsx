@@ -3,7 +3,7 @@ import './_BottomBar.scss'
 import { TabData } from '../../views/Home'
 import { typeIconMap } from '../../utils/typeIcon'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { getLanguageByFilename } from '../../utils/languageMap'
+import { getLanguageDisplayName } from '../../utils/languageMap'
 
 interface BottomBarProps {
     activeFile?: TabData;
@@ -33,7 +33,7 @@ export default function BottomBar({ activeFile, cursorPos, errors, warnings, onT
                             icon={typeIconMap[activeFile.type]?.icon} 
                             style={{ color: typeIconMap[activeFile.type]?.color }}
                         />
-                        <span>{getLanguageByFilename(activeFile.name)}</span>
+                        <span>{getLanguageDisplayName(activeFile.name)}</span>
                     </div>
                 </>
             )}

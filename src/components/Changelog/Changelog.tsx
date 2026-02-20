@@ -13,7 +13,8 @@ export default function Changelog({ version, onClose }: ChangelogProps) {
         {
             type: 'New Features',
             items: [
-                'Nothing for this version 😭',
+                'Remembering the last project has been implemented, now when you restart Blink you will be back to the project you were in',
+                'Terminal now shows the current directory instead of the default system startup directory'
             ]
         },
         {
