@@ -3,7 +3,7 @@
   "appId": "com.codeadiksuu.blink",
   "asar": true,
   "productName": "Blink",
-  "compression": "maximum",          // ← better ratio (build ~20–60 s slower)
+  "compression": "normal",          // ← better ratio (build ~20–60 s slower)
   "directories": {
     "output": "release/${version}"
   },
@@ -46,9 +46,8 @@
     "perMachine": false,
     "allowToChangeInstallationDirectory": true,
     "deleteAppDataOnUninstall": false,
-    "multiLanguageInstaller": true,           // optional – better UX
-    "installerLanguages": ["en_US", "ru_RU"]           // ← restrict languages, saves ~10–30 MB
-    // or even just "en_US" if English-only
+    "allowToChangeInstallationDirectory": true,
+    "deleteAppDataOnUninstall": false
   },
   "linux": {
     "target": ["AppImage"],
