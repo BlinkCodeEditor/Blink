@@ -423,6 +423,7 @@ export default function Home() {
                     onJump={handleJumpToProblem}
                     activeTab={activeTab}
                     setActiveTab={setActiveTab}
+                    cwd={tree?.path}
                 />
             )}
             {showChangelog && (
