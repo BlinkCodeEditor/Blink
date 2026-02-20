@@ -28,7 +28,14 @@ const TreeItem = ({ node, depth, onFileClick, selectedPath, onSelect, onExpand, 
     // Determine icon and color
     let iconData = typeIconMap.file;
     if (node.type === 'folder') {
-        iconData = typeIconMap.folder;
+        const folderKey = node.name.startsWith('.') ? node.name.slice(1) : node.name;
+        if (node.name in typeIconMap) {
+            iconData = typeIconMap[node.name as keyof typeof typeIconMap];
+        } else if (folderKey in typeIconMap) {
+            iconData = typeIconMap[folderKey as keyof typeof typeIconMap];
+        } else {
+            iconData = typeIconMap.folder;
+        }
     } else {
         const extension = node.name.split('.').pop();
         if (extension && extension in typeIconMap) {
@@ -54,7 +61,9 @@ const TreeItem = ({ node, depth, onFileClick, selectedPath, onSelect, onExpand, 
             }
         } else {
             // Ensure we handle non-standard types safely
-            onFileClick(node.name, node.type as FileType, node.path);
+            const extension = node.name.split('.').pop();
+            const passType = (extension && extension in typeIconMap) ? extension : node.type;
+            onFileClick(node.name, passType as FileType, node.path);
         }
     };
 

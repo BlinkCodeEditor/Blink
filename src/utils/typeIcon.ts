@@ -1,9 +1,15 @@
 import { 
   faCss3Alt, 
   faDartLang, 
+  faGit, 
+  faGitAlt, 
+  faGithub, 
   faGolang, 
   faHtml5, 
   faJava, 
+  faMarkdown, 
+  faNodeJs, 
+  faNpm, 
   faPhp, 
   faPython, 
   faReact, 
@@ -15,41 +21,22 @@ import {
 } from "@fortawesome/free-brands-svg-icons";
 
 import { 
+    faCopyright,
   faFile,
   faImage 
 } from "@fortawesome/free-regular-svg-icons";
 
 import { 
-  faFolder
+    faAtom,
+  faFolder,
+  faMicrochip,
+  faTerminal
 } from "@fortawesome/free-solid-svg-icons";
 
 import { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 
 // Optional: define a type for the enhanced structure
-export type FileType = 
-  | "folder"
-  | "file"
-  | "html"
-  | "css"
-  | "js"
-  | "ts"
-  | "python"
-  | "dart"
-  | "golang"
-  | "java"
-  | "php"
-  | "rust"
-  | "sass"
-  | "scss"
-  | "swift"
-  | "jsx"
-  | "tsx"
-  | "png"
-  | "jpg"
-  | "jpeg"
-  | "gif"
-  | "svg"
-  | "ico";
+export type FileType = string;
 
 // Enhanced structure: icon + color (as Tailwind class, CSS var, or hex)
 export const typeIconMap: Record<FileType, { icon: IconDefinition; color: string }> = {
@@ -58,7 +45,8 @@ export const typeIconMap: Record<FileType, { icon: IconDefinition; color: string
 
   html:   { icon: faHtml5,  color: "#E44D26" },          // HTML orange
   css:    { icon: faCss3Alt,color: "#1572B6" },          // CSS blue
-  js:     { icon: faSquareJs,color: "#F7DF1E" },         // JavaScript yellow
+  js:     { icon: faSquareJs, color: "#F7DF1E" },         // JavaScript yellow
+  mjs:    { icon: faSquareJs, color: "#F7DF1E" },         // JavaScript yellow
   ts:     { icon: faTypescript, color: "#3178C6" },      // TypeScript blue
 
   python: { icon: faPython, color: "#3776AB" },          // Python blue
@@ -78,4 +66,14 @@ export const typeIconMap: Record<FileType, { icon: IconDefinition; color: string
   gif: { icon: faImage, color: "#e082f5ff" },
   svg: { icon: faImage, color: "#e082f5ff" },
   ico: { icon: faImage, color: "#e082f5ff" },
+  gitignore: { icon: faGitAlt, color: "#f03c2e" },
+  LICENSE: { icon: faCopyright, color: "#90A4AE" },
+  md: { icon: faMarkdown, color: "#90A4AE" },
+  sh: { icon: faTerminal, color: "#58b187ff" },
+  json: { icon: faNpm, color: "#f03c2e" },
+  node_modules: { icon: faNodeJs, color: "#19bb6fff" },
+  exe: { icon: faMicrochip, color: "#ffffffff" },
+  git: { icon: faGit, color: "#f03c2e" },
+  github: { icon: faGithub, color: "#ffffffff" },
+  electron: { icon: faAtom, color: "#8de5f9" },
 };

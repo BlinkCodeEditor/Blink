@@ -3,6 +3,7 @@ import './_BottomBar.scss'
 import { TabData } from '../../views/Home'
 import { typeIconMap } from '../../utils/typeIcon'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { getLanguageByFilename } from '../../utils/languageMap'
 
 interface BottomBarProps {
     activeFile?: TabData;
@@ -13,26 +14,6 @@ interface BottomBarProps {
 }
 
 export default function BottomBar({ activeFile, cursorPos, errors, warnings, onToggleProblems }: BottomBarProps) {
-  const getLanguageName = (type: string) => {
-    const names: Record<string, string> = {
-        ts: 'TypeScript',
-        tsx: 'TypeScript JSX',
-        js: 'JavaScript',
-        jsx: 'JavaScript JSX',
-        html: 'HTML',
-        css: 'CSS',
-        scss: 'SCSS',
-        sass: 'Sass',
-        python: 'Python',
-        go: 'Go',
-        rust: 'Rust',
-        java: 'Java',
-        php: 'PHP',
-        dart: 'Dart',
-        swift: 'Swift',
-    };
-    return names[type] || type.toUpperCase();
-  };
 
   return (
     <div className="bottom_bar">
@@ -52,7 +33,7 @@ export default function BottomBar({ activeFile, cursorPos, errors, warnings, onT
                             icon={typeIconMap[activeFile.type]?.icon} 
                             style={{ color: typeIconMap[activeFile.type]?.color }}
                         />
-                        <span>{getLanguageName(activeFile.type)}</span>
+                        <span>{getLanguageByFilename(activeFile.name)}</span>
                     </div>
                 </>
             )}
