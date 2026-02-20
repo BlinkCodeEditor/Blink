@@ -2,6 +2,7 @@ import { app, BrowserWindow, ipcMain, dialog, protocol, screen } from "electron"
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 import fs from "node:fs/promises";
+import * as pty from "node-pty";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -337,6 +338,52 @@ function createWindow() {
             return false;
         }
     });
+
+    // ─── Terminal IPC ─────────────────────────────────────────────────────────
+    // Map of terminalId → IPty instance
+    const terminals = new Map<string, pty.IPty>();
+    let _terminalCounter = 0;
+
+    ipcMain.handle('terminal:create', async (_, cwd?: string, shell?: string) => {
+        const defaultShell = process.platform === 'win32' ? 'powershell.exe' : (process.env.SHELL || '/bin/bash');
+        const shellToUse = shell || defaultShell;
+        const id = `term_${++_terminalCounter}`;
+        const term = pty.spawn(shellToUse, [], {
+            name: 'xterm-color',
+            cols: 80,
+            rows: 24,
+            cwd: cwd || process.env.HOME || '/',
+            env: process.env as Record<string, string>,
+        });
+        terminals.set(id, term);
+        term.onData((data) => {
+            win?.webContents.send('terminal:data', id, data);
+        });
+        term.onExit(() => {
+            terminals.delete(id);
+            win?.webContents.send('terminal:exit', id);
+        });
+        return id;
+    });
+
+    ipcMain.on('terminal:input', (_, id: string, data: string) => {
+        terminals.get(id)?.write(data);
+    });
+
+    ipcMain.on('terminal:resize', (_, id: string, cols: number, rows: number) => {
+        if (cols > 0 && rows > 0) {
+            terminals.get(id)?.resize(cols, rows);
+        }
+    });
+
+    ipcMain.on('terminal:kill', (_, id: string) => {
+        const term = terminals.get(id);
+        if (term) {
+            try { term.kill(); } catch { /* already dead */ }
+            terminals.delete(id);
+        }
+    });
+    // ─── End Terminal IPC ────────────────────────────────────────────────────
 
     // Window state events
     win.on("maximize", () => {

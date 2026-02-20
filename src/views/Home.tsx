@@ -6,7 +6,7 @@ import Editor from "../components/Editor/Editor";
 import { FileType } from "../utils/typeIcon";
 import { useKeybinds } from "../utils/keybinds";
 import BottomBar from "../components/BottomBar/BottomBar";
-import ProblemsPanel from "../components/BottomBar/ProblemsPanel";
+import ProblemsPanel, { ActiveTab } from "../components/BottomBar/ProblemsPanel";
 import Changelog from "../components/Changelog/Changelog";
 import pkg from "../../package.json";
 
@@ -41,6 +41,11 @@ export default function Home() {
     // Context Menu state
     const [contextMenu, setContextMenu] = useState<{ x: number, y: number, node: any } | null>(null);
     const [clipboard, setClipboard] = useState<{ path: string, type: 'copy' | 'cut' } | null>(null);
+
+    
+
+    // Problems Panel state
+    const [activeTab, setActiveTab] = useState<ActiveTab>('problems');
 
     const handleContextMenu = (e: React.MouseEvent, node: any) => {
         setContextMenu({ x: e.clientX, y: e.clientY, node });
@@ -281,6 +286,10 @@ export default function Home() {
             setCreationType('folder');
             setRenamePath(null);
             setIsCreationModalOpen(true);
+        },
+        'Control+`': () => {
+            setShowProblems(!showProblems);
+            setActiveTab('terminal');
         }
     });
 
@@ -360,7 +369,11 @@ export default function Home() {
         <>
             <Navbar />
             <main>
-                <Sidebar />
+                <Sidebar 
+                    showProblems={showProblems}
+                    setShowProblems={setShowProblems}
+                    setActiveTab={setActiveTab}
+                    />
                 <Explorer 
                     onFileClick={handleFileClick} 
                     tree={tree} 
@@ -401,13 +414,15 @@ export default function Home() {
                 cursorPos={cursorPos}
                 errors={markers.filter(m => m.severity === 8).length}
                 warnings={markers.filter(m => m.severity === 4 || m.severity === 2 || m.severity === 1).length}
-                onToggleProblems={() => setShowProblems(!showProblems)}
+                onToggleProblems={() => {setShowProblems(!showProblems); setActiveTab('problems')}}
             />
             {showProblems && (
                 <ProblemsPanel 
                     markers={markers} 
                     onClose={() => setShowProblems(false)}
                     onJump={handleJumpToProblem}
+                    activeTab={activeTab}
+                    setActiveTab={setActiveTab}
                 />
             )}
             {showChangelog && (

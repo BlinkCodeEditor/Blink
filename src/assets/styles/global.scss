@@ -1,7 +1,8 @@
 @use 'sass:color';
 @use './colors.scss';
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap');
 *, body, html, #root {
     margin: 0;
     padding: 0;
@@ -53,4 +54,10 @@ main {
 
 ::-webkit-scrollbar-thumb:hover {
     background: color.adjust(colors.$primary, $lightness: 5%);
+}
+
+/* Ensure the terminal container doesn't override weights */
+.xterm-viewport {
+    font-variant-ligatures: none;
+    -webkit-font-smoothing: antialiased;
 }

@@ -2,13 +2,15 @@ import { faFile } from '@fortawesome/free-regular-svg-icons'
 import { faCodeBranch, faCubes, faSearch, faTerminal } from '@fortawesome/free-solid-svg-icons'
 import SidebarLink from './SidebarLink'
 import './_Sidebar.scss'
+import { ActiveTab } from '../BottomBar/ProblemsPanel'
 
-export default function Sidebar() {
+export default function Sidebar({ showProblems, setShowProblems, setActiveTab }: { showProblems: boolean, setShowProblems: (showProblems: boolean) => void, setActiveTab: (tab: ActiveTab) => void }) {
 
   interface SidebarOption {
     label: string
     icon: any
     active?: boolean
+    action?: () => void
   }
 
   const options: SidebarOption[] = [
@@ -26,8 +28,12 @@ export default function Sidebar() {
       icon: faCodeBranch
     },
     {
-      label: 'Terminal (Ctrl + Shift + T)',
-      icon: faTerminal
+      label: 'Terminal (Ctrl + `)',
+      icon: faTerminal,
+      action: () => {
+        setShowProblems(!showProblems);
+        setActiveTab('terminal');
+      }
     },
     {
       label: 'Community (Ctrl + Shift + C)',
@@ -38,7 +44,7 @@ export default function Sidebar() {
   return (
     <div className="sidebar">
         {options.map((option, index) => (
-            <SidebarLink key={index} label={option.label} icon={option.icon} active={option.active} />
+            <SidebarLink key={index} label={option.label} icon={option.icon} active={option.active} action={option.action} />
         ))}
     </div>
   )

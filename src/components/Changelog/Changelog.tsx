@@ -11,12 +11,17 @@ export default function Changelog({ version, onClose }: ChangelogProps) {
     const changes = [
         {
             type: 'New Features',
-            items: []
+            items: [
+                'Added terminal next to problems panel',
+                '- Terminal profiles with shell selection',
+                '- Terminal tabs with easy navigation',
+                'Added new keyboard shortcut, which opens the terminal (CTRL + `)'
+            ]
         },
         {
             type: 'Improvements',
             items: [
-                'Fixed issue with inaccessible window on Linux based systems',
+                'Nothing for this version 😭',
             ]
         }
     ];

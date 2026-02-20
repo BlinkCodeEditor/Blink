@@ -28,18 +28,33 @@
         }
     }
     
-    .problems_header {
+    .actions_header {
         padding: 12px 20px;
         display: flex;
         align-items: center;
-        justify-content: space-between;
         border-bottom: 1px solid rgba(colors.$gray, 0.1);
-        .title {
-            color: colors.$gray;
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+        justify-content: space-between;
+        .actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: .2s ease-in-out;
+            .title {
+                display: flex;
+                align-items: center;
+                border-radius: 8px;
+                padding: 4px 12px;
+                color: colors.$gray;
+                font-size: 12px;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                background: transparent;
+                cursor: pointer;
+                &:hover, &.active {
+                    background: color.adjust(colors.$bg, $lightness: 5%);
+                }
+            }
         }
         .close_btn {
             background: transparent;
@@ -117,6 +132,244 @@
             font-style: italic;
         }
     }
+
+    // ─── Shared visibility utility ───────────────────────────────────────────
+    .hidden {
+        display: none !important;
+    }
+
+    // ─── Terminal wrapper ─────────────────────────────────────────────────────
+    .terminal_wrapper {
+        flex: 1;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        padding: 4px 0 0;
+
+        // Terminal tabs bar
+        .terminal_tabs {
+            display: flex;
+            align-items: center;
+            padding: 0 8px 8px;
+            gap: 4px;
+            border-bottom: 1px solid rgba(colors.$gray, 0.1);
+
+            .terminal_tabs_list {
+                display: flex;
+                align-items: center;
+                gap: 2px;
+                flex: 1;
+                overflow-x: clip;
+                scrollbar-width: none;
+                
+                &::-webkit-scrollbar {
+                    display: none;
+                }
+            }
+
+            .terminal_tab {
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                padding: 6px 8px;
+                background: rgba(colors.$gray, 0.1);
+                border: 1px solid transparent;
+                border-radius: 6px 6px 0 0;
+                cursor: pointer;
+                transition: all 0.15s ease;
+                min-width: 100px;
+                max-width: 160px;
+
+                &:hover {
+                    background: rgba(colors.$gray, 0.15);
+                }
+
+                &.active {
+                    background: colors.$bg;
+                    border-color: rgba(colors.$gray, 0.2);
+                    border-bottom-color: colors.$bg;
+
+                    .terminal_tab_profile {
+                        .tab_profile_button {
+                            color: colors.$white;
+                            
+                            .tab_chevron {
+                                color: colors.$gray;
+                            }
+                        }
+                    }
+                }
+
+                .terminal_tab_profile {
+                    position: relative;
+                    flex: 1;
+                    min-width: 0;
+
+                    .tab_profile_button {
+                        display: flex;
+                        align-items: center;
+                        gap: 6px;
+                        width: 100%;
+                        background: transparent;
+                        border: none;
+                        color: colors.$gray;
+                        font-size: 12px;
+                        font-weight: 500;
+                        cursor: pointer;
+                        padding: 2px 4px;
+                        border-radius: 4px;
+                        transition: all 0.15s ease;
+
+                        &:hover {
+                            background: rgba(colors.$gray, 0.1);
+                            color: colors.$white;
+                        }
+
+                        .tab_profile_name {
+                            flex: 1;
+                            text-align: left;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                            white-space: nowrap;
+                        }
+
+                        .tab_chevron {
+                            font-size: 8px;
+                            color: colors.$gray;
+                            transition: transform 0.2s ease;
+                        }
+                    }
+
+                    .profile_dropdown {
+                        position: absolute;
+                        top: calc(100% + 4px);
+                        left: 0;
+                        min-width: 140px;
+                        background: colors.$bg;
+                        border: 1px solid rgba(colors.$gray, 0.15);
+                        border-radius: 6px;
+                        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+                        overflow: hidden;
+                        z-index: 100;
+                        animation: dropdownFade 0.15s ease;
+
+                        .profile_option {
+                            display: flex;
+                            align-items: center;
+                            justify-content: space-between;
+                            width: 100%;
+                            padding: 8px 12px;
+                            background: transparent;
+                            border: none;
+                            color: colors.$white;
+                            font-size: 12px;
+                            cursor: pointer;
+                            transition: background 0.15s ease;
+                            text-align: left;
+
+                            &:hover {
+                                background: rgba(colors.$primary, 0.15);
+                            }
+
+                            &.active {
+                                background: rgba(colors.$primary, 0.2);
+                                
+                                .profile_option_name {
+                                    color: colors.$primary;
+                                    font-weight: 600;
+                                }
+                            }
+
+                            .check_mark {
+                                color: colors.$primary;
+                                font-size: 10px;
+                                font-weight: 600;
+                            }
+                        }
+                    }
+                }
+
+                .terminal_tab_close {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    padding: 4px;
+                    background: transparent;
+                    border: none;
+                    color: colors.$gray;
+                    font-size: 12px;
+                    cursor: pointer;
+                    border-radius: 4px;
+                    opacity: 0.6;
+                    transition: all 0.15s ease;
+
+                    &:hover {
+                        opacity: 1;
+                        color: colors.$error;
+                        background: rgba(colors.$error, 0.15);
+                    }
+                }
+            }
+
+            .terminal_tab_add {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 28px;
+                height: 28px;
+                background: transparent;
+                border: 1px solid rgba(colors.$gray, 0.15);
+                border-radius: 6px;
+                color: colors.$gray;
+                font-size: 14px;
+                cursor: pointer;
+                transition: all 0.15s ease;
+                flex-shrink: 0;
+
+                &:hover {
+                    background: rgba(colors.$gray, 0.1);
+                    color: colors.$white;
+                    border-color: rgba(colors.$gray, 0.3);
+                }
+            }
+        }
+
+        .terminals_container {
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+
+            .terminal_instance {
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                overflow: hidden;
+
+                &.hidden {
+                    display: none;
+                }
+            }
+        }
+    }
+
+    .terminal_panel {
+        flex: 1;
+        overflow: hidden;
+        height: 100%;
+        // Let xterm control its own sizing
+        .xterm {
+            height: 100%;
+        }
+        .xterm-viewport {
+            background: transparent !important;
+            overflow-y: hidden !important;
+        }
+        .xterm-screen {
+            padding: 0px 12px;
+        }
+    }
 }
 
 @keyframes slideUp {
@@ -127,5 +380,16 @@
     to {
         transform: translateY(0);
         opacity: 1;
+    }
+}
+
+@keyframes dropdownFade {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }

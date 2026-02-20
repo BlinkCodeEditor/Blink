@@ -11,6 +11,14 @@ export default defineConfig({
       main: {
         // Shortcut of `build.lib.entry`.
         entry: 'electron/main.ts',
+        vite: {
+          build: {
+            rollupOptions: {
+              // Key: node-pty must be external to the Main process
+              external: ['node-pty'],
+            },
+          },
+        },
       },
       preload: {
         // Shortcut of `build.rollupOptions.input`.
@@ -31,6 +39,12 @@ export default defineConfig({
       scss: {
         api: 'modern-compiler',
       },
+    },
+  },
+  build: {
+    rollupOptions: {
+      // Additional security measure for the entire build
+      external: ['node-pty'],
     },
   },
 })
