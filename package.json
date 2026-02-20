@@ -1,7 +1,7 @@
 {
   "name": "blink",
   "private": true,
-  "version": "0.0.6",
+  "version": "0.0.7",
   "type": "module",
   "description": "Blink Code Editor is a high-performance development environment built for speed and efficiency. Designed for modern workflows, it provides a seamless experience without the bloat of traditional editors.",
   "author": "CodeAdiksuu",

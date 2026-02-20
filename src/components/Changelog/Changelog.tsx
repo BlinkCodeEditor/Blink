@@ -11,20 +11,12 @@ export default function Changelog({ version, onClose }: ChangelogProps) {
     const changes = [
         {
             type: 'New Features',
-            items: [
-                'Creating new files and folders',
-                'New keyboard shortcuts:',
-                '- CTRL + N: Create new file',
-                '- CTRL + SHIFT + N: Create new folder',
-                'Context menu after right click the file/folder with options like copy/paste/cut/rename/remove',
-                'Drag and drop files and folders to move them'
-            ]
+            items: []
         },
         {
             type: 'Improvements',
             items: [
-                'Added new shortcuts to home page',
-                'Build also available for Linux'
+                'Fixed issue with inaccessible window on Linux based systems',
             ]
         }
     ];

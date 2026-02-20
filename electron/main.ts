@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, dialog, protocol } from "electron";
+import { app, BrowserWindow, ipcMain, dialog, protocol, screen } from "electron";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 import fs from "node:fs/promises";
@@ -95,6 +95,51 @@ async function getFolderTree(dirPath: string, recursive: boolean = false): Promi
     }
 }
 
+/**
+ * On Linux with frame:false, win.maximize() / win.unmaximize() don't work
+ * reliably. We manage maximize state entirely ourselves with an explicit flag:
+ *  - linuxIsMaximized      → boolean state (WM geometry checks are fragile)
+ *  - linuxPreMaximizeBounds → saved bounds to restore on unmaximize
+ *  - linuxSafeMaximize()   → saves bounds, fills the current display, sets flag
+ *  - linuxSafeUnmaximize() → restores bounds, clears flag
+ */
+let linuxIsMaximized = false;
+let linuxPreMaximizeBounds: Electron.Rectangle | null = null;
+
+function linuxSafeMaximize(window: BrowserWindow) {
+    if (process.platform === 'linux') {
+        // Save current bounds so we can restore them later
+        linuxPreMaximizeBounds = window.getBounds();
+        // Maximize to the work area of whichever display the window is on now
+        const { x, y, width, height } = screen.getDisplayMatching(window.getBounds()).workArea;
+        window.setPosition(x, y);
+        window.setSize(width, height);
+        linuxIsMaximized = true;
+        window.webContents.send('window-maximized');
+    } else {
+        window.maximize();
+    }
+}
+
+function linuxSafeUnmaximize(window: BrowserWindow) {
+    if (process.platform === 'linux') {
+        if (linuxPreMaximizeBounds) {
+            window.setBounds(linuxPreMaximizeBounds);
+            linuxPreMaximizeBounds = null;
+        } else {
+            // Fallback: center a default-sized window on the current display
+            const { x, y, width, height } = screen.getDisplayMatching(window.getBounds()).workArea;
+            const w = 1280, h = 800;
+            window.setPosition(Math.round(x + (width - w) / 2), Math.round(y + (height - h) / 2));
+            window.setSize(w, h);
+        }
+        linuxIsMaximized = false;
+        window.webContents.send('window-unmaximized');
+    } else {
+        window.unmaximize();
+    }
+}
+
 function createWindow() {
     win = new BrowserWindow({
         width: 1280,
@@ -112,7 +157,18 @@ function createWindow() {
         resizable: true,
     });
 
-    win.maximize();
+    // On Linux, open on the display the cursor is currently on
+    if (process.platform === 'linux') {
+        const cursorDisplay = screen.getDisplayNearestPoint(screen.getCursorScreenPoint());
+        const { x, y, width, height } = cursorDisplay.workArea;
+        win.setPosition(x, y);
+        win.setSize(width, height);
+        // Mark as maximized — no pre-maximize bounds to save since the window
+        // was just created; linuxSafeUnmaximize's fallback will center it.
+        linuxIsMaximized = true;
+    } else {
+        win.maximize();
+    }
 
     // Test active push message to Renderer-process.
     win.webContents.on("did-finish-load", () => {
@@ -149,10 +205,21 @@ function createWindow() {
     });
 
     ipcMain.on("window-maximize", () => {
-        if (win?.isMaximized()) {
-            win.unmaximize();
+        if (!win) return;
+        if (process.platform === 'linux') {
+            // Use our explicit boolean — geometry checks are unreliable because
+            // the WM can shift the window by a pixel or two after setSize/setPosition.
+            if (linuxIsMaximized) {
+                linuxSafeUnmaximize(win);
+            } else {
+                linuxSafeMaximize(win);
+            }
         } else {
-            win?.maximize();
+            if (win.isMaximized()) {
+                win.unmaximize();
+            } else {
+                win.maximize();
+            }
         }
     });
 
