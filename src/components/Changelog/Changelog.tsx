@@ -1,7 +1,6 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import './_Changelog.scss';
-import { typeIconMap } from '../../utils/typeIcon';
 
 interface ChangelogProps {
     version: string;
@@ -13,25 +12,14 @@ export default function Changelog({ version, onClose }: ChangelogProps) {
         {
             type: 'New Features',
             items: [
-                'Remembering the last project has been implemented, now when you restart Blink you will be back to the project you were in',
-                'Terminal now shows the current directory instead of the default system startup directory'
+                'Onboarding has been implemented, now when you first open Blink you will be taken through a series of steps to get started. Accepting the terms of service and privacy policy is required to continue. For now there are no ToS or Privacy Policy, but I plan to add them in the future.',
+                'Implemented Google Analytics for tracking user interactions and events like download counts.',
             ]
         },
         {
             type: 'Improvements',
             items: [
-                "A lot of QOL improvements, I've added the brand new file and folder icons for:",
-                <><FontAwesomeIcon color={typeIconMap['mjs'].color} icon={typeIconMap['mjs'].icon} /> .mjs</>,
-                <><FontAwesomeIcon color={typeIconMap['gitignore'].color} icon={typeIconMap['gitignore'].icon} /> .gitignore</>,
-                <><FontAwesomeIcon color={typeIconMap['LICENSE'].color} icon={typeIconMap['LICENSE'].icon} /> LICENSE</>,
-                <><FontAwesomeIcon color={typeIconMap['md'].color} icon={typeIconMap['md'].icon} /> .md</>,
-                <><FontAwesomeIcon color={typeIconMap['sh'].color} icon={typeIconMap['sh'].icon} /> .sh</>,
-                <><FontAwesomeIcon color={typeIconMap['json'].color} icon={typeIconMap['json'].icon} /> .json</>,
-                <><FontAwesomeIcon color={typeIconMap['node_modules'].color} icon={typeIconMap['node_modules'].icon} /> node_modules</>,
-                <><FontAwesomeIcon color={typeIconMap['exe'].color} icon={typeIconMap['exe'].icon} /> .exe</>,
-                <><FontAwesomeIcon color={typeIconMap['git'].color} icon={typeIconMap['git'].icon} /> .git</>,
-                <><FontAwesomeIcon color={typeIconMap['github'].color} icon={typeIconMap['github'].icon} /> .github</>,
-                <><FontAwesomeIcon color={typeIconMap['electron'].color} icon={typeIconMap['electron'].icon} /> .electron</>,
+                "Nothing for this version 😭"
             ]
         }
     ];

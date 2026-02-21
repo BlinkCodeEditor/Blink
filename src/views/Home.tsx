@@ -12,6 +12,8 @@ import pkg from "../../package.json";
 
 import CreationModal from "../components/Explorer/CreationModal";
 import ContextMenu from "../components/Explorer/ContextMenu";
+import Onboarding from "../components/Onboarding/Onboarding";
+import { handleDownloadEvent } from "../analytics/analytics";
 
 export interface TabData {
     name: string;
@@ -29,6 +31,9 @@ export default function Home() {
     const [markers, setMarkers] = useState<any[]>([]);
     const [showProblems, setShowProblems] = useState(false);
     const [showChangelog, setShowChangelog] = useState(false);
+    
+    // Onboarding state
+    const [showOnboarding, setShowOnboarding] = useState(false);
     
     // Modal state
     const [isCreationModalOpen, setIsCreationModalOpen] = useState(false);
@@ -151,9 +156,15 @@ export default function Home() {
                 localStorage.removeItem('lastOpenedFolder');
             });
         }
+
+        const viewedOnboarding = localStorage.getItem('blink_viewed_onboarding')
+        if (!viewedOnboarding) {
+            setShowOnboarding(true);
+        }
     }, []);
 
     const handleCloseChangelog = () => {
+        handleDownloadEvent();
         localStorage.setItem('lastSeenVersion', pkg.version);
         setShowChangelog(false);
     };
@@ -422,6 +433,12 @@ export default function Home() {
                     tree={tree}
                     onOpenFile={handleFileClick}
                 />
+                {showOnboarding && (
+                    <Onboarding onClose={() => {
+                        setShowOnboarding(false);
+                        localStorage.setItem('blink_viewed_onboarding', 'true');
+                    }} />
+                )}
             </main>
             <BottomBar 
                 activeFile={tabs[activeTabIndex]} 
