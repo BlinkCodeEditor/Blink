@@ -153,8 +153,8 @@ function createWindow() {
         icon: path.join(process.env.VITE_PUBLIC, "logo.png"),
         webPreferences: {
             preload: path.join(__dirname, "preload.mjs"),
-            // devTools: !!VITE_DEV_SERVER_URL,
-            devTools: true
+            devTools: !!VITE_DEV_SERVER_URL,
+            // devTools: true
         },
         autoHideMenuBar: true,
         frame: false,
@@ -184,18 +184,18 @@ function createWindow() {
     });
 
     // Block DevTools shortcuts in production
-    // if (!VITE_DEV_SERVER_URL) {
-    //     win.webContents.on('before-input-event', (event, input) => {
-    //         if (
-    //             (input.control && input.shift && input.key.toLowerCase() === 'i') ||
-    //             (input.control && input.shift && input.key.toLowerCase() === 'j') ||
-    //             (input.control && input.shift && input.key.toLowerCase() === 'c') ||
-    //             input.key === 'F12'
-    //         ) {
-    //             event.preventDefault();
-    //         }
-    //     });
-    // }
+    if (!VITE_DEV_SERVER_URL) {
+        win.webContents.on('before-input-event', (event, input) => {
+            if (
+                (input.control && input.shift && input.key.toLowerCase() === 'i') ||
+                (input.control && input.shift && input.key.toLowerCase() === 'j') ||
+                (input.control && input.shift && input.key.toLowerCase() === 'c') ||
+                input.key === 'F12'
+            ) {
+                event.preventDefault();
+            }
+        });
+    }
 
     if (VITE_DEV_SERVER_URL) {
         win.loadURL(VITE_DEV_SERVER_URL);

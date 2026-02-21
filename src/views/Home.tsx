@@ -13,7 +13,7 @@ import pkg from "../../package.json";
 import CreationModal from "../components/Explorer/CreationModal";
 import ContextMenu from "../components/Explorer/ContextMenu";
 import Onboarding from "../components/Onboarding/Onboarding";
-import { handleDownloadEvent } from "../analytics/analytics";
+import { handleDownloadEvent, handleNewUser } from "../analytics/analytics";
 
 export interface TabData {
     name: string;
@@ -437,6 +437,7 @@ export default function Home() {
                     <Onboarding onClose={() => {
                         setShowOnboarding(false);
                         localStorage.setItem('blink_viewed_onboarding', 'true');
+                        handleNewUser();
                     }} />
                 )}
             </main>

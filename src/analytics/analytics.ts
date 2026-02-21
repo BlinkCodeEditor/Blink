@@ -10,6 +10,10 @@ export const handleDownloadEvent = () => {
   trackEvent("download", { version: pkg.version });
 };
 
+export const handleNewUser = () => {
+  trackEvent("new_user", { version: pkg.version, os: navigator.platform });
+}
+
 export const logPageView = () => {
   // HashRouter keeps the path in window.location.hash
   const hash = window.location.hash;
