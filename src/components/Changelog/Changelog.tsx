@@ -13,7 +13,7 @@ export default function Changelog({ version, onClose }: ChangelogProps) {
             type: 'New Features',
             items: [
                 'Onboarding has been implemented, now when you first open Blink you will be taken through a series of steps to get started. Accepting the terms of service and privacy policy is required to continue. For now there are no ToS or Privacy Policy, but I plan to add them in the future.',
-                'Implemented Google Analytics for tracking user interactions and events like download counts.',
+                'Implemented Analytics for tracking user interactions and events like download counts.',
             ]
         },
         {

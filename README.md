@@ -44,7 +44,7 @@ Blink Code Editor is a high-performance IDE built from the ground up to ensure e
 * Built-in Terminal next to problems panel (CTRL + `)
 * Last session directory history
 * Auto current directory in Terminal
-* Google Analytics integration for tracking user interactions and events.
+* Aptabase Analytics integration for tracking user interactions and events.
 
 ### Work in Progress
 * Custom theme engine.

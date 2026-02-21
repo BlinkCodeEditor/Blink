@@ -3,6 +3,9 @@ import { fileURLToPath } from "node:url";
 import path from "node:path";
 import fs from "node:fs/promises";
 import * as pty from "node-pty";
+import { initialize } from "@aptabase/electron/main";
+
+initialize("A-EU-7120104303");
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -150,7 +153,8 @@ function createWindow() {
         icon: path.join(process.env.VITE_PUBLIC, "logo.png"),
         webPreferences: {
             preload: path.join(__dirname, "preload.mjs"),
-            devTools: !!VITE_DEV_SERVER_URL,
+            // devTools: !!VITE_DEV_SERVER_URL,
+            devTools: true
         },
         autoHideMenuBar: true,
         frame: false,
@@ -180,18 +184,18 @@ function createWindow() {
     });
 
     // Block DevTools shortcuts in production
-    if (!VITE_DEV_SERVER_URL) {
-        win.webContents.on('before-input-event', (event, input) => {
-            if (
-                (input.control && input.shift && input.key.toLowerCase() === 'i') ||
-                (input.control && input.shift && input.key.toLowerCase() === 'j') ||
-                (input.control && input.shift && input.key.toLowerCase() === 'c') ||
-                input.key === 'F12'
-            ) {
-                event.preventDefault();
-            }
-        });
-    }
+    // if (!VITE_DEV_SERVER_URL) {
+    //     win.webContents.on('before-input-event', (event, input) => {
+    //         if (
+    //             (input.control && input.shift && input.key.toLowerCase() === 'i') ||
+    //             (input.control && input.shift && input.key.toLowerCase() === 'j') ||
+    //             (input.control && input.shift && input.key.toLowerCase() === 'c') ||
+    //             input.key === 'F12'
+    //         ) {
+    //             event.preventDefault();
+    //         }
+    //     });
+    // }
 
     if (VITE_DEV_SERVER_URL) {
         win.loadURL(VITE_DEV_SERVER_URL);
@@ -405,9 +409,10 @@ app.on("window-all-closed", () => {
     }
 });
 
-// Register custom protocol for local resources
+// Register custom protocol for local resources and aptabase
 protocol.registerSchemesAsPrivileged([
-    { scheme: 'blink-resource', privileges: { secure: true, standard: true, supportFetchAPI: true, bypassCSP: true } }
+    { scheme: 'blink-resource', privileges: { secure: true, standard: true, supportFetchAPI: true, bypassCSP: true } },
+    { scheme: 'aptabase-ipc', privileges: { secure: true, standard: true, supportFetchAPI: true, bypassCSP: true } }
 ]);
 
 app.on("activate", () => {

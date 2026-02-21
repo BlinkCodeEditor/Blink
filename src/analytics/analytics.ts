@@ -1,34 +1,22 @@
-import ReactGA from "react-ga4";
+import { trackEvent } from "@aptabase/electron/renderer";
 import pkg from "../../package.json";
 
-const TRACKING_ID = "G-Z2N6XZFT4E";
-
 export const initGA = () => {
-  ReactGA.initialize(TRACKING_ID, {
-    gaOptions: {
-      checkProtocol: false // It's important for Electron
-    }
-  });
+  // Aptabase is automatically initialized in main.ts, so we just track that the app started in the renderer
+  trackEvent("app_started", { version: pkg.version });
 };
 
 export const handleDownloadEvent = () => {
-    const version = pkg.version;
-    ReactGA.event({
-        category: "Downloads",
-        action: "Download",
-        label: "Download",
-        value: parseInt(version)
-    })
-}
+  trackEvent("download", { version: pkg.version });
+};
 
 export const logPageView = () => {
-  ReactGA.send({ hitType: "pageview", page: window.location.pathname });
+  // HashRouter keeps the path in window.location.hash
+  const hash = window.location.hash;
+  const path = (hash && hash.startsWith('#/')) ? hash.substring(1) : "/";
+  trackEvent("view_screen", { route: path });
 };
 
 export const logEvent = (category: string, action: string, label: string) => {
-  ReactGA.event({
-    category: category,
-    action: action,
-    label: label,
-  });
+  trackEvent(action, { category, label });
 };
