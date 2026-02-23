@@ -4,6 +4,7 @@ import path from "node:path";
 import fs from "node:fs/promises";
 import * as pty from "node-pty";
 import { initialize } from "@aptabase/electron/main";
+import { autoUpdater } from 'electron-updater';
 
 initialize("A-EU-7120104303");
 
@@ -398,6 +399,31 @@ function createWindow() {
         win?.webContents.send("window-unmaximized");
     });
 }
+
+// 1. Checking for updates after button click
+ipcMain.on('check-update', () => {
+  autoUpdater.checkForUpdatesAndNotify();
+});
+
+// 2. When update is found
+autoUpdater.on('update-available', () => {
+  win?.webContents.send('update_available');
+});
+
+// 2.5 When no update is found
+autoUpdater.on('update-not-available', () => {
+  win?.webContents.send('update_not_available');
+});
+
+// 3. When update is downloaded
+autoUpdater.on('update-downloaded', () => {
+  win?.webContents.send('update_downloaded');
+});
+
+// 4. Installing update
+ipcMain.on('restart_app', () => {
+  autoUpdater.quitAndInstall();
+});
 
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits

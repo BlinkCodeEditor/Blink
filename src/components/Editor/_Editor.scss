@@ -167,5 +167,23 @@
                 }
             }
         }
+        .check_for_updates {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 16px;
+            button {
+                padding: 8px 16px;
+                background: color.adjust(colors.$bg, $lightness: 5%);
+                border: 1px solid color.adjust(colors.$bg, $lightness: 10%);
+                border-radius: 12px;
+                color: colors.$white;
+                cursor: pointer;
+                transition: .2s linear;
+                &:hover {
+                    background: color.adjust(colors.$bg, $lightness: 10%);
+                }
+            }
+        }
     }
 }
