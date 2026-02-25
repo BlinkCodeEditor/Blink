@@ -1,4 +1,5 @@
 import NavbarLogo from "./NavbarLogo";
+import NavbarMenu from "./NavbarMenu";
 import NavbarOptions from "./NavbarOptions";
 import NavbarSearch from "./NavbarSearch";
 import "./_Navbar.scss";
@@ -6,7 +7,10 @@ import "./_Navbar.scss";
 export default function Navbar() {
     return (
         <nav>
-            <NavbarLogo />
+            <div className="navbar_left">
+                <NavbarLogo />
+                <NavbarMenu />
+            </div>
             <NavbarSearch />
             <NavbarOptions />
         </nav>

@@ -12,25 +12,90 @@ nav {
     -webkit-app-region: drag;
     
     // Make logo and search area draggable
-    .navbar_logo, .navbar_search {
+    .navbar_left, .navbar_logo, .navbar_search {
         -webkit-app-region: drag;
     }
     
     // Make the options area non-draggable for button clicks
-    .navbar_options {
+    .navbar_options, .navbar_menu {
         -webkit-app-region: no-drag;
     }
 
-    .navbar_logo {
-        margin-left: 16px;
-        height: 32px;
-        width: 126px;
+    .navbar_left {
         display: flex;
-        img {
-            width: 32px;
+        align-items: center;
+        flex: 1;
+        height: 100%;
+        
+        .navbar_logo {
+            margin-left: 16px;
             height: 32px;
+            width: auto;
+            margin-right: 16px;
+            display: flex;
+            img {
+                width: 32px;
+                height: 32px;
+            }
+        }
+
+        .navbar_menu {
+            display: flex;
+            align-items: center;
+            height: 100%;
+
+            .menu_item {
+                position: relative;
+                color: colors.$gray;
+                font-size: 13px;
+                padding: 4px 8px;
+                cursor: pointer;
+                border-radius: 4px;
+                user-select: none;
+                transition: background 0.1s ease;
+
+                &:hover, &.active {
+                    background: color.adjust(colors.$bg, $lightness: 5%);
+                    color: colors.$white;
+                }
+
+                .menu_dropdown {
+                    position: absolute;
+                    top: 100%;
+                    left: 0;
+                    margin-top: 4px;
+                    background: colors.$bg;
+                    border: 1px solid color.adjust(colors.$bg, $lightness: 10%);
+                    border-radius: 6px;
+                    padding: 4px;
+                    min-width: 200px;
+                    z-index: 1000;
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+
+                    .menu_dropdown_item {
+                        button {
+                            width: 100%;
+                            text-align: left;
+                            background: transparent;
+                            border: none;
+                            color: colors.$gray;
+                            font-size: 13px;
+                            padding: 6px 12px;
+                            border-radius: 4px;
+                            cursor: pointer;
+                            transition: background 0.1s ease;
+
+                            &:hover {
+                                background: colors.$blue;
+                                color: colors.$white;
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
+
     .navbar_search {
         display: flex;
         height: 32px;
@@ -62,9 +127,9 @@ nav {
     .navbar_options {
         display: flex;
         align-items: center;
-        justify-content: center;
+        justify-content: flex-end;
+        flex: 1;
         -webkit-app-region: no-drag;
-        width: 126px;
         .navbar_option {
             height: 42px;
             width: 42px;
