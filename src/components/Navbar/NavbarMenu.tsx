@@ -19,6 +19,7 @@ export default function NavbarMenu({ onOpenSettings }: NavbarMenuProps) {
     const [dropdownOpen, setDropdownOpen] = useState<string | null>(null);
     const [message, setMessage] = useState('Check for updates');
     const [updateAvailable, setUpdateAvailable] = useState(false);
+    const [updateProgress, setUpdateProgress] = useState<number | null>(null);
     const [items, setItems] = useState<MenuItem[]>([]);
     const menuRef = useRef<HTMLDivElement>(null);
 
@@ -39,7 +40,9 @@ export default function NavbarMenu({ onOpenSettings }: NavbarMenuProps) {
                 dropdownItems: [
                     {
                         label: !updateAvailable ? (
-                            <button onClick={handleCheckForUpdates}>{message}</button>
+                            <button onClick={handleCheckForUpdates}>
+                                {updateProgress !== null ? `Downloading... ${Math.round(updateProgress)}%` : message}
+                            </button>
                         ) : (
                             <button onClick={handleInstallAndRestart}>Install and restart app</button>
                         ),
@@ -58,7 +61,7 @@ export default function NavbarMenu({ onOpenSettings }: NavbarMenuProps) {
             },
         ];
         setItems(menuItems);
-    }, [message, updateAvailable, onOpenSettings]);
+    }, [message, updateAvailable, updateProgress, onOpenSettings]);
 
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
@@ -94,15 +97,27 @@ export default function NavbarMenu({ onOpenSettings }: NavbarMenuProps) {
             setMessage('Update downloaded! You can install it now.');
             setUpdateAvailable(true);
         };
+        const onUpdateError = (_event: any, error: string) => {
+            setMessage(`Error: ${error}`);
+            setUpdateProgress(null);
+        };
+        const onUpdateProgress = (_event: any, percent: number) => {
+            setUpdateProgress(percent);
+            setMessage(`Downloading update... ${Math.round(percent)}%`);
+        };
 
         window.electronAPI.on('update_available', onUpdateAvailable);
         window.electronAPI.on('update_not_available', onUpdateNotAvailable);
         window.electronAPI.on('update_downloaded', onUpdateDownloaded);
+        window.electronAPI.on('update_error', onUpdateError);
+        window.electronAPI.on('update_progress', onUpdateProgress);
 
         return () => {
             window.electronAPI.off('update_available', onUpdateAvailable);
             window.electronAPI.off('update_not_available', onUpdateNotAvailable);
             window.electronAPI.off('update_downloaded', onUpdateDownloaded);
+            window.electronAPI.off('update_error', onUpdateError);
+            window.electronAPI.off('update_progress', onUpdateProgress);
         };
     }, []);
 

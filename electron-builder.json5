@@ -42,7 +42,7 @@
       }
     ],
     "icon": "public/logo.ico",
-    "artifactName": "${productName} Setup ${version}.${ext}"
+    "artifactName": "${productName}-Setup-${version}.${ext}"
   },
 
   "nsis": {

@@ -6,6 +6,15 @@ import * as pty from "node-pty";
 import { initialize } from "@aptabase/electron/main";
 import { autoUpdater } from 'electron-updater';
 
+// Configure auto-updater logger
+autoUpdater.logger = {
+  info: (message: any) => console.log(message),
+  warn: (message: any) => console.warn(message),
+  error: (message: any) => console.error(message)
+};
+autoUpdater.autoDownload = true;
+autoUpdater.autoInstallOnAppQuit = true;
+
 initialize("A-EU-7120104303");
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -430,6 +439,17 @@ function createWindow() {
 // 1. Checking for updates after button click
 ipcMain.on('check-update', () => {
   autoUpdater.checkForUpdatesAndNotify();
+});
+
+// 1.5 Error handler
+autoUpdater.on('error', (error) => {
+  console.error('Auto-updater error:', error);
+  win?.webContents.send('update_error', error.message);
+});
+
+// 1.6 Download progress handler
+autoUpdater.on('download-progress', (progress) => {
+  win?.webContents.send('update_progress', progress.percent);
 });
 
 // 2. When update is found

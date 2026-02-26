@@ -19,7 +19,8 @@ export default function Changelog({ version, onClose }: ChangelogProps) {
             type: 'Improvements',
             items: [
                 "Fixed the bug where the window could not be moved",
-                "Fixed an issue where it was impossible to reselect a folder without clearing the application memory."
+                "Fixed an issue where it was impossible to reselect a folder without clearing the application memory.",
+                "Fixed the issue where the application would not update automatically."
             ]
         }
     ];
