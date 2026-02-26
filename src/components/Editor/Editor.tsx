@@ -9,6 +9,7 @@ import { syncWorkspaceWithMonaco, setupCompilerOptions, TreeNode } from '../../u
 import { FileType } from '../../utils/typeIcon'
 import ImagePreview from './ImagePreview'
 import './_ImagePreview.scss'
+import Settings, { EditorSettings } from '../Settings/Settings'
 
 interface EditorProps {
     tabs: TabData[];
@@ -21,9 +22,17 @@ interface EditorProps {
     tree: TreeNode | null;
     openFolder: () => void;
     onOpenFile: (name: string, type: FileType, path: string) => void;
+    // Settings
+    settings: EditorSettings;
+    onSettingChange: (key: keyof EditorSettings, value: any) => void;
+    isSettingsActive: boolean;
+    showSettingsTab: boolean;
+    onOpenSettings: () => void;
+    onCloseSettings: () => void;
+    onOpenSettingsFolder: () => void;
 }
 
-export default function Editor({ tabs, activeTabIndex, setActiveTabIndex, onCloseTab, onContentChange, onCursorChange, onValidationChange, tree, openFolder, onOpenFile }: EditorProps) {
+export default function Editor({ tabs, activeTabIndex, setActiveTabIndex, onCloseTab, onContentChange, onCursorChange, onValidationChange, tree, openFolder, onOpenFile, settings, onSettingChange, isSettingsActive, showSettingsTab, onOpenSettings, onCloseSettings, onOpenSettingsFolder }: EditorProps) {
   const activeFile = tabs[activeTabIndex];
   const monacoRef = useRef<any>(null);
   const disposablesRef = useRef<any[]>([]);
@@ -60,6 +69,11 @@ export default function Editor({ tabs, activeTabIndex, setActiveTabIndex, onClos
   useEffect(() => {
     if (monacoRef.current && tree && tree.path !== lastSyncedTreeRef.current) {
         syncWorkspaceWithMonaco(monacoRef.current, tree);
+        
+        // Re-setup compiler options with new root path for module resolution
+        const syncDisposables = setupCompilerOptions(monacoRef.current, tree.path);
+        disposablesRef.current.push(syncDisposables);
+        
         lastSyncedTreeRef.current = tree.path;
     }
   }, [tree, monacoRef.current]);
@@ -71,9 +85,19 @@ export default function Editor({ tabs, activeTabIndex, setActiveTabIndex, onClos
             activeTabIndex={activeTabIndex} 
             setActiveTabIndex={setActiveTabIndex}
             onCloseTab={onCloseTab}
+            isSettingsActive={isSettingsActive}
+            showSettingsTab={showSettingsTab}
+            onOpenSettings={onOpenSettings}
+            onCloseSettings={onCloseSettings}
         />
         <div className="editor_main">
-            {activeFile ? (
+            {isSettingsActive ? (
+                <Settings 
+                    settings={settings} 
+                    onSettingChange={onSettingChange} 
+                    onOpenSettingsFolder={onOpenSettingsFolder}
+                />
+            ) : activeFile ? (
                 ['png', 'jpg', 'jpeg', 'gif', 'svg', 'ico'].includes(activeFile.name.split('.').pop()?.toLowerCase() || '') ? (
                     <ImagePreview path={activeFile.path} name={activeFile.name} />
                 ) : (
@@ -140,12 +164,12 @@ export default function Editor({ tabs, activeTabIndex, setActiveTabIndex, onClos
                             (window as any).editorInstance = editor;
                         }}
                         options={{
-                            fontSize: 14,
-                            minimap: { enabled: false },
-                            scrollBeyondLastLine: false,
+                            fontSize: settings.fontSize,
+                            minimap: { enabled: settings.minimap },
+                            scrollBeyondLastLine: settings.scrollBeyondLastLine,
                             automaticLayout: true,
-                            fontFamily: 'Geist Mono, monospace',
-                            lineHeight: 24,
+                            fontFamily: settings.fontFamily,
+                            lineHeight: settings.lineHeight,
                             padding: { top: 20 },
                             wordBasedSuggestions: 'allDocuments',
                             suggestOnTriggerCharacters: true,
@@ -153,6 +177,14 @@ export default function Editor({ tabs, activeTabIndex, setActiveTabIndex, onClos
                             tabCompletion: 'on',
                             links: true,
                             renderValidationDecorations: 'on',
+                            tabSize: settings.tabSize,
+                            wordWrap: settings.wordWrap as any,
+                            lineNumbers: settings.lineNumbers as any,
+                            cursorStyle: settings.cursorStyle as any,
+                            cursorBlinking: settings.cursorBlinking as any,
+                            fontLigatures: settings.fontLigatures,
+                            renderWhitespace: settings.renderWhitespace as any,
+                            bracketPairColorization: { enabled: settings.bracketPairColorization },
                         }}
                     />
                 )

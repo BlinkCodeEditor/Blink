@@ -11,8 +11,8 @@ nav {
     // Allow double-click on the navbar for maximize
     -webkit-app-region: drag;
     
-    // Make logo and search area draggable
-    .navbar_left, .navbar_logo, .navbar_search {
+    // Make logo and left side area draggable
+    .navbar_left, .navbar_logo {
         -webkit-app-region: drag;
     }
     
@@ -24,8 +24,7 @@ nav {
     .navbar_left {
         display: flex;
         align-items: center;
-        flex: 1;
-        height: 100%;
+        width: 126px;
         
         .navbar_logo {
             margin-left: 16px;
@@ -95,40 +94,11 @@ nav {
             }
         }
     }
-
-    .navbar_search {
-        display: flex;
-        height: 32px;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        background: color.adjust(colors.$bg, $lightness: 5%);
-        border-radius: 99px;
-        border: 1px solid color.adjust(colors.$bg, $lightness: 10%);
-        padding: 4px 16px;
-        gap: 8px;
-        span {
-            font-size: 14px;
-            color: colors.$gray;
-        }
-        input {
-            -webkit-app-region: no-drag;
-            width: 200px;
-            height: 100%;
-            background: transparent;
-            color: colors.$white;
-            font-weight: 400;
-            font-size: 13px;
-            &::placeholder {
-                color: colors.$gray;
-            }
-        }
-    }
     .navbar_options {
         display: flex;
         align-items: center;
-        justify-content: flex-end;
-        flex: 1;
+        justify-content: center;
+        width: 126px;
         -webkit-app-region: no-drag;
         .navbar_option {
             height: 42px;

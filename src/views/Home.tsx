@@ -9,6 +9,7 @@ import BottomBar from "../components/BottomBar/BottomBar";
 import ProblemsPanel, { ActiveTab } from "../components/BottomBar/ProblemsPanel";
 import Changelog from "../components/Changelog/Changelog";
 import pkg from "../../package.json";
+import { DEFAULT_EDITOR_SETTINGS, EditorSettings } from "../components/Settings/Settings";
 
 import CreationModal from "../components/Explorer/CreationModal";
 import ContextMenu from "../components/Explorer/ContextMenu";
@@ -51,6 +52,46 @@ export default function Home() {
 
     // Problems Panel state
     const [activeTab, setActiveTab] = useState<ActiveTab>('problems');
+
+    // Editor settings state
+    const [editorSettings, setEditorSettings] = useState<EditorSettings>(DEFAULT_EDITOR_SETTINGS);
+    const [isSettingsActive, setIsSettingsActive] = useState(false);
+    const [showSettingsTab, setShowSettingsTab] = useState(false);
+
+    const handleOpenSettings = () => {
+        setShowSettingsTab(true);
+        setIsSettingsActive(true);
+    };
+
+    const handleSettingChange = (key: keyof EditorSettings, value: any) => {
+        setEditorSettings(prev => {
+            const newSettings = { ...prev, [key]: value };
+            (window as any).electronAPI.invoke('settings:save', newSettings);
+            return newSettings;
+        });
+    };
+
+    const handleOpenSettingsFolder = async () => {
+        const path = await (window as any).electronAPI.invoke('settings:getPath');
+        if (path) {
+            const folderTree = await (window as any).electronAPI.invoke('directory:getTree', path);
+            if (folderTree) {
+                setTree(folderTree);
+                localStorage.setItem('lastOpenedFolder', folderTree.path);
+                setIsSettingsActive(false);
+                setTabs([]); // Clear tabs when switching to settings folder
+                setActiveTabIndex(0);
+            }
+        }
+    };
+
+    useEffect(() => {
+        (window as any).electronAPI.invoke('settings:load').then((savedSettings: any) => {
+            if (savedSettings) {
+                setEditorSettings(prev => ({ ...prev, ...savedSettings }));
+            }
+        });
+    }, []);
 
     const handleContextMenu = (e: React.MouseEvent, node: any) => {
         setContextMenu({ x: e.clientX, y: e.clientY, node });
@@ -174,6 +215,8 @@ export default function Home() {
         if (folderTree) {
             setTree(folderTree);
             localStorage.setItem('lastOpenedFolder', folderTree.path);
+            setTabs([]); // Clear tabs when opening a new folder
+            setActiveTabIndex(0);
         }
     };
 
@@ -392,7 +435,7 @@ export default function Home() {
 
     return (
         <>
-            <Navbar />
+            <Navbar onOpenSettings={handleOpenSettings} />
             <main>
                 <Sidebar 
                     showProblems={showProblems}
@@ -423,6 +466,7 @@ export default function Home() {
                     activeTabIndex={activeTabIndex} 
                     setActiveTabIndex={(index) => {
                         setActiveTabIndex(index);
+                        setIsSettingsActive(false);
                         setCursorPos({ line: 1, column: 1 });
                     }}
                     onCloseTab={handleCloseTab}
@@ -432,6 +476,16 @@ export default function Home() {
                     openFolder={openFolder}
                     tree={tree}
                     onOpenFile={handleFileClick}
+                    settings={editorSettings}
+                    onSettingChange={handleSettingChange}
+                    isSettingsActive={isSettingsActive}
+                    showSettingsTab={showSettingsTab}
+                    onOpenSettings={handleOpenSettings}
+                    onCloseSettings={() => {
+                        setIsSettingsActive(false);
+                        setShowSettingsTab(false);
+                    }}
+                    onOpenSettingsFolder={handleOpenSettingsFolder}
                 />
                 {showOnboarding && (
                     <Onboarding onClose={() => {

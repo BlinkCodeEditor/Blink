@@ -105,13 +105,27 @@
                     display: block;
                 }
             }
+
+            // Settings virtual tab — pushed to the right with separator
+            &.tab--settings {
+
+                &.active {
+                    background: color.adjust(colors.$bg, $lightness: 10%);
+                    .tab_name {
+                        color: colors.$white;
+                    }
+                    .tab_type {
+                        color: colors.$primary !important;
+                    }
+                }
+            }
         }
     }
 
     .editor_main {
         flex: 1;
         width: 100%;
-        // overflow: hidden;
+        overflow: auto;
         
         .monaco-editor {
             .margin {

@@ -12,13 +12,14 @@ export default function Changelog({ version, onClose }: ChangelogProps) {
         {
             type: 'New Features',
             items: [
-                'Auto-updates have been implemented, now when you first open Blink you will be taken through a series of steps to get started. Accepting the terms of service and privacy policy is required to continue. For now there are no ToS or Privacy Policy, but I plan to add them in the future.',
+                'Add Settings panel with font, editor, cursor & minimap customization options, accessible in the navbar "Edit" link button'
             ]
         },
         {
             type: 'Improvements',
             items: [
-                "Nothing for this version 😭"
+                "Fixed the bug where the window could not be moved",
+                "Fixed an issue where it was impossible to reselect a folder without clearing the application memory."
             ]
         }
     ];

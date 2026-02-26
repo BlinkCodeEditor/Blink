@@ -344,6 +344,33 @@ function createWindow() {
         }
     });
 
+    // ─── Settings IPC ─────────────────────────────────────────────────────────
+    const settingsPath = path.join(app.getPath('userData'), 'settings.json');
+
+    ipcMain.handle('settings:load', async () => {
+        try {
+            const data = await fs.readFile(settingsPath, 'utf-8');
+            return JSON.parse(data);
+        } catch (error) {
+            // File might not exist yet, which is fine
+            return null;
+        }
+    });
+
+    ipcMain.handle('settings:save', async (_, settingsObj: any) => {
+        try {
+            await fs.writeFile(settingsPath, JSON.stringify(settingsObj, null, 2), 'utf-8');
+            return true;
+        } catch (error) {
+            console.error('Failed to save settings:', error);
+            return false;
+        }
+    });
+
+    ipcMain.handle('settings:getPath', async () => {
+        return app.getPath('userData');
+    });
+
     // ─── Terminal IPC ─────────────────────────────────────────────────────────
     // Map of terminalId → IPty instance
     const terminals = new Map<string, pty.IPty>();

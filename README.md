@@ -9,6 +9,7 @@ Blink Code Editor is a high-performance IDE built from the ground up to ensure e
 
 | Release Channel | Version | Stability | Available | Platforms |
 | :--- | :--- | :--- | :--- | :--- |
+| **Stable** | v0.0.12-dev | Stable | Yes | Windows, Linux |
 | **Stable** | v0.0.11-dev | Stable | Yes | Windows, Linux |
 | **Stable** | v0.0.10-dev | Stable | Yes | Windows, Linux |
 | **Development** | v0.0.9-dev | Stable | Yes | Windows, Linux |
@@ -47,6 +48,7 @@ Blink Code Editor is a high-performance IDE built from the ground up to ensure e
 * Auto current directory in Terminal
 * Aptabase Analytics integration for tracking user interactions and events.
 * Auto-updates have been implemented, press "ALT" key for display navbar links with update button.
+* Settings panel with font, editor, cursor & minimap customization options, accessible in the navbar "Edit" link button.
 
 ### Work in Progress
 * Custom theme engine.
